@@ -11,10 +11,9 @@ import { TodosService } from '@app/todos/services/todos.service';
   ],
   templateUrl: './complete-all.component.html',
 })
-export class CompleteAllComponent implements OnInit, OnDestroy {
+export class CompleteAllComponent implements OnInit {
 
   multipleTodosExist = false;
-  subscription: Subscription;
 
   constructor (
     private changeDetectorRef: ChangeDetectorRef,
@@ -22,20 +21,14 @@ export class CompleteAllComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.subscription = this.todosService.allTodos$.subscribe(todos => {
-      this.multipleTodosExist = todos && todos.length > 1;
-      this.changeDetectorRef.markForCheck();
-    });
-  }
-
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    // this.subscription = this.todosService.allTodos$.subscribe(todos => {
+    //   this.multipleTodosExist = todos && todos.length > 1;
+    //   this.changeDetectorRef.markForCheck();
+    // });
   }
 
   toggleCompleteAll(): void {
-    this.todosService.toggleAllCompleted();
+    // this.todosService.toggleAllCompleted();
   }
 
 }

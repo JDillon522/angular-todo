@@ -1,49 +1,30 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Store } from '@ngrx/store';
+import { from } from 'rxjs';
+import { liveQuery } from 'dexie';
+import { TodoDb } from './db';
 
-import { ITodo } from '../interfaces';
-import { ITodosState } from '../state/todos.reducer';
-import { FILTER_MODES } from '../constants/filter-modes';
-import * as TodoActions from '../state/todo.actions';
-import * as todoSelectors from '../state/todo.selectors';
 
 @Injectable()
 export class TodosService {
 
-  allTodos$: Observable<ITodo[]>;
-
   constructor(
-    private store: Store<ITodosState>,
-  ) {
-    this.allTodos$ = this.store.select(todoSelectors.allTodos);
+    private db: TodoDb
+  ) { }
+
+  public getTodosFromDb() {
+    /**
+     * Bizarre Bug Note:
+     * I had to wrap liveQuery with the from operator because even though
+     * I could subscribe to the liveQuery result, and that it was an Observable,
+     * Typescript would throw the error 'The property "pipe" does not exist on type "Observable"'
+     * This was the only solution I found around it.
+     */
+    return from(liveQuery(() => this.db.todos.toArray()));
   }
 
-  addTodo(text: string): void {
-    this.store.dispatch(TodoActions.addTodo({ text }));
-  }
-
-  removeTodo(index: number): void {
-    this.store.dispatch(TodoActions.removeTodo({ index }));
-  }
-
-  toggleComplete(index: number): void {
-    this.store.dispatch(TodoActions.toggleCompleted({ index }));
-  }
-
-  toggleAllCompleted(): void {
-    this.store.dispatch(TodoActions.toggleAllCompleted());
-  }
-
-  updateTodo(index: number, text: string): void {
-    this.store.dispatch(TodoActions.updateTodo({ index, text }));
-  }
-
-  changeFilterMode(mode: FILTER_MODES): void {
-    this.store.dispatch(TodoActions.changeFilterMode({ mode }));
-  }
-
-  clearCompleted(): void {
-    this.store.dispatch(TodoActions.clearCompleted());
+  public addTodoToDb(text: string) {
+    return from(this.db.todos.add({
+      text: text
+    }));
   }
 }

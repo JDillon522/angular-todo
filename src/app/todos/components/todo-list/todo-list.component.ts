@@ -1,4 +1,8 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { ITodo } from '../../interfaces';
+import { allTodos } from '../../state/todo.selectors';
 
 @Component({
   selector: 'app-todos-list',
@@ -7,4 +11,10 @@ import { Component } from '@angular/core';
   ],
   templateUrl: './todo-list.component.html',
 })
-export class TodosListComponent {}
+export class TodosListComponent {
+  public todos$: Observable<ITodo[]> = this.store.select(allTodos);
+
+  constructor(
+    private store: Store
+  ) {}
+}

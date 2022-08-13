@@ -1,8 +1,8 @@
 <main class="todoapp">
   <header class="header">
     <h1>todos</h1>
-    <form enctype="application/x-www-form-urlencoded" role="form" novalidate>
-      <input class="new-todo" placeholder="What needs to be done" autofocus>
+    <form [formGroup]="newTodoForm" (ngSubmit)="addTodo()" enctype="application/x-www-form-urlencoded" role="form" novalidate>
+      <input formControlName="todo" class="new-todo" placeholder="What needs to be done" autofocus >
     </form>
   </header>
   <section class="main">

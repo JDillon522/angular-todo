@@ -7,6 +7,9 @@ import { CompleteAllComponent } from './components/complete-all/complete-all.com
 import { TodosListComponent } from './components/todo-list/todo-list.component';
 import { TodosService } from './services/todos.service';
 import { todosReducer } from './state/todos.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { TodosEffect } from './state/todo.effects';
+import { TodoDb } from './services/db';
 
 const DECLARATIONS = [
   CompleteAllComponent,
@@ -25,9 +28,11 @@ const DECLARATIONS = [
     FormsModule,
     ReactiveFormsModule,
     StoreModule.forFeature('todos', todosReducer),
+    EffectsModule.forFeature([TodosEffect]),
   ],
   providers: [
     TodosService,
+    TodoDb
   ],
 })
 export class TodosModule {}

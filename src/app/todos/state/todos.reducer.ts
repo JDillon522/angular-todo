@@ -3,6 +3,7 @@ import * as TodoActions from './todo.actions';
 
 import { FILTER_MODES } from './../constants/filter-modes';
 import { ITodo } from '../interfaces/ITodo';
+import { ITodoActionCreate, ITodoActionIndex, ITodoActionFilter, ITodoActionSync } from '../interfaces/IActions';
 
 export interface ITodosState {
   filterMode?: FILTER_MODES;
@@ -17,6 +18,7 @@ export const initialState: ITodosState = {
 export function todosReducer(state: ITodosState, action: Action) {
   return createReducer(
     initialState,
+    on(TodoActions.syncTodos, syncTodos),
     on(TodoActions.addTodo, addTodo),
     on(TodoActions.removeTodo, removeTodo),
     on(TodoActions.changeFilterMode, changeFilterMode),
@@ -27,14 +29,20 @@ export function todosReducer(state: ITodosState, action: Action) {
 export const filterMode = (state: ITodosState) => state.filterMode;
 export const todos = (state: ITodosState) => state.todos;
 
-const addTodo = (existingState: ITodosState, { text }: TodoActions.ITodoActionCreate): ITodosState => {
+const syncTodos = (existingState: ITodosState, { todos }: ITodoActionSync): ITodosState => {
+  return {
+    todos
+  }
+}
+
+const addTodo = (existingState: ITodosState, { text }: ITodoActionCreate): ITodosState => {
   return {
     ...existingState,
     todos: [{ text, completed: false }, ...existingState.todos],
   };
 }
 
-const removeTodo = (existingState: ITodosState, { index }: TodoActions.ITodoActionIndex): ITodosState => {
+const removeTodo = (existingState: ITodosState, { index }: ITodoActionIndex): ITodosState => {
   const updatedTodos = [...existingState.todos];
   updatedTodos.splice(index, 1);
 
@@ -44,7 +52,7 @@ const removeTodo = (existingState: ITodosState, { index }: TodoActions.ITodoActi
   };
 }
 
-const changeFilterMode = (existingState: ITodosState, { mode }: TodoActions.ITodoActionFilter): ITodosState => {
+const changeFilterMode = (existingState: ITodosState, { mode }: ITodoActionFilter): ITodosState => {
   return {
     ...existingState,
     filterMode: mode,

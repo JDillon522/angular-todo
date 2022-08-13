@@ -1,8 +1,8 @@
 <ul class="todo-list">
-  <li>
+  <li *ngFor="let todo of todos$ | async">
     <div class="view">
       <input class="toggle" type="checkbox" />
-      <label></label>
+      <label>{{ todo.text }}</label>
       <button class="destroy"></button>
     </div>
   </li>

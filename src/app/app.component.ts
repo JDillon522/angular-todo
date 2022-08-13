@@ -14,7 +14,7 @@ import { allTodos } from './todos/state/todo.selectors';
 export class AppComponent implements OnInit {
 
   public newTodoForm = new FormGroup({
-    todo: new FormControl(null, Validators.required)
+    todo: new FormControl(null, [Validators.minLength(1), Validators.required])
   });
 
   constructor(
@@ -26,8 +26,12 @@ export class AppComponent implements OnInit {
   }
 
   public addTodo(): void {
+    if (this.newTodoForm.invalid) {
+      return;
+    }
+
     const text = this.newTodoForm.get('todo').value;
-    this.store.dispatch(addTodo(text));
+    this.store.dispatch(addTodo({ text }));
     this.newTodoForm.reset();
   }
 }

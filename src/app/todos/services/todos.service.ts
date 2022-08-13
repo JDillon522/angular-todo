@@ -23,6 +23,7 @@ export class TodosService {
   }
 
   public addTodoToDb(text: string) {
+
     return from(this.db.todos.add({
       text: text
     }));

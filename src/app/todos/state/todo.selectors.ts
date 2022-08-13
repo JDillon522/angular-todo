@@ -39,3 +39,18 @@ export const currentFilter = createSelector(
   (state: ITodosState) => state.filterMode
 );
 
+export const noResultsMessage = createSelector(
+  todosSelector,
+  (state: ITodosState) => {
+    switch (state.filterMode) {
+      case 'Active':
+        return 'No Todos in your queue. Good job!';
+
+      case 'Completed':
+        return 'Looks like you\'re out of Todos!... \nOr you need to get to work...';
+
+      default:
+        return 'Looks like you need more work...';
+    }
+  }
+)

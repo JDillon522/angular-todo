@@ -17,7 +17,8 @@ export class TodoDb extends Dexie {
   private async populate() {
     await db.todos.add({
       text: 'This is a seed todo',
-      completed: false
+      completed: false,
+      editing: false
     });
 
   }

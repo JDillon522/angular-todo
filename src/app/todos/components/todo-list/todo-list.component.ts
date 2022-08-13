@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { ITodo } from '../../interfaces';
 import { removeTodo } from '../../state/todo.actions';
-import { allTodos } from '../../state/todo.selectors';
+import { allTodos, filteredTodos } from '../../state/todo.selectors';
 
 @Component({
   selector: 'app-todos-list',
@@ -13,7 +13,7 @@ import { allTodos } from '../../state/todo.selectors';
   templateUrl: './todo-list.component.html',
 })
 export class TodosListComponent {
-  public todos$: Observable<ITodo[]> = this.store.select(allTodos);
+  public todos$: Observable<ITodo[]> = this.store.select(filteredTodos);
 
   constructor(
     private store: Store

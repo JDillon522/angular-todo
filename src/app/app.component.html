@@ -13,13 +13,25 @@
     <span class="todo-count"></span>
     <ul class="filters">
       <li>
-        <a href="#" class="selected">All</a>
+        <a href="#"
+          [ngClass]="{'selected': (currentFilter$ | async) === 'All'}"
+          (click)="toggleFilter('All')">
+            All
+        </a>
       </li>
       <li>
-        <a href="#">Active</a>
+        <a href="#"
+          [ngClass]="{'selected': (currentFilter$ | async) === 'Active'}"
+          (click)="toggleFilter('Active')">
+            Active
+        </a>
       </li>
       <li>
-        <a href="#" >Completed</a>
+        <a href="#"
+          [ngClass]="{'selected': (currentFilter$ | async) === 'Completed'}"
+          (click)="toggleFilter('Completed')">
+            Completed
+        </a>
       </li>
     </ul>
     <button class="clear-completed">Clear completed</button>

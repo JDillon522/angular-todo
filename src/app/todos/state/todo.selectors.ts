@@ -39,7 +39,3 @@ export const currentFilter = createSelector(
   TodosState.filterMode
 );
 
-export const editingATodo = createSelector(
-  todosSelector,
-  TodosState.editingTodo
-);

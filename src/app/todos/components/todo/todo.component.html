@@ -1,24 +1,36 @@
-<form [formGroup]="todoForm"
-  [ngClass]="{'view': !(doubleClicked$ | async) || !(openEdit$ | async)}"
-  enctype="application/x-www-form-urlencoded"
-  role="form"
-  (ngSubmit)="editTodo()">
+<div #todoLabel >
+  <ng-container *ngIf="(doubleClicked$ | async)"></ng-container>
 
+  <form [formGroup]="todoForm"
+    class="view"
+    enctype="application/x-www-form-urlencoded"
+    role="form"
+    (ngSubmit)="editTodo()"
+    *ngIf="!todo.editing">
 
-  <ng-container *ngIf="(doubleClicked$ | async) && (openEdit$ | async) as doubleClick; else display">
+  <input class="toggle"
+    type="checkbox"
+    formControlName="completed"
+    (change)="editTodo()"
+    [ngClass]="{'hidden-todo': todo.editing}"/>
+
+    <label [ngClass]="{'hidden-todo': todo.editing}">{{ todo.text }}</label>
+    <button class="destroy" (click)="deleteTodo(todo.id)"></button>
+
+  </form>
+
+  <form
+    *ngIf="todo.editing"
+    [formGroup]="todoForm"
+    enctype="application/x-www-form-urlencoded"
+    role="form"
+    (ngSubmit)="editTodo()"
+    #debugEditForm>
+
     <input formControlName="text"
       class="edit"
       placeholder="What needs to be done"
       autofocus>
-  </ng-container>
+  </form>
 
-  <ng-template #display>
-    <input class="toggle"
-      type="checkbox"
-      formControlName="completed"
-      (change)="editTodo()"/>
-
-    <label #todoLabel>{{ todo.text }}</label>
-    <button class="destroy" (click)="deleteTodo(todo.id)"></button>
-  </ng-template>
-</form>
+</div>

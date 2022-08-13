@@ -1,11 +1,10 @@
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { BehaviorSubject, buffer, combineLatest, debounceTime, filter, forkJoin, fromEvent, map, Observable, shareReplay, Subject, tap } from 'rxjs';
+import { BehaviorSubject, buffer, debounceTime, fromEvent, map, Observable, tap } from 'rxjs';
 import { ITodo } from '../../interfaces';
 import { ITodoForm } from '../../interfaces/ITodo';
 import { editTodo, openTodoEdit, removeTodo } from '../../state/todo.actions';
-import { editingATodo } from '../../state/todo.selectors';
 
 @Component({
   selector: 'app-todo',
@@ -15,13 +14,14 @@ import { editingATodo } from '../../state/todo.selectors';
 export class TodoComponent implements OnChanges, AfterViewInit {
   @Input()
   public todo!: ITodo;
-  @Input()
-  public todoThatIsUnderEdit: number = null;
 
   public openEdit$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   @ViewChild('todoLabel', { static: false })
   public todoLabel: ElementRef;
+
+  @ViewChild('debugEditForm', { static: false })
+  public debugEditForm: ElementRef;
 
   public click$: Observable<PointerEvent> = new Observable<PointerEvent>();
   public doubleClicked$: Observable<boolean> = new Observable<boolean>();
@@ -32,8 +32,6 @@ export class TodoComponent implements OnChanges, AfterViewInit {
     text: new FormControl(null, [Validators.required, Validators.minLength(1)])
   });
 
-  private open: boolean = false;
-
   constructor(
     private store: Store
   ) { }
@@ -41,16 +39,7 @@ export class TodoComponent implements OnChanges, AfterViewInit {
   ngOnChanges(): void {
     this.resetTodoForm();
 
-    // Make sure the correct edit field is open
-    if (this.todo && this.todoThatIsUnderEdit) {
-      this.open = this.todoThatIsUnderEdit === this.todo.id;
-      this.openEdit$.next(this.open);
 
-      if (!this.open) {
-        // Discard unsaved edits
-        this.resetTodoForm();
-      }
-    }
   }
 
   ngAfterViewInit(): void {
@@ -60,7 +49,10 @@ export class TodoComponent implements OnChanges, AfterViewInit {
      * However after submitting it will not open any other edit inputs until I usually dispatch
      * another action. But even that is hit or miss.
      */
-    this.click$ = fromEvent(this.todoLabel.nativeElement, 'click');
+    this.click$ = fromEvent(this.todoLabel.nativeElement, 'click').pipe(
+      tap(() => console.log('CLICK', this.todo.id)),
+      map((val: PointerEvent) => val)
+    );
 
     this.doubleClicked$ = this.click$.pipe(
       buffer(this.click$.pipe(debounceTime(250))),
@@ -68,10 +60,10 @@ export class TodoComponent implements OnChanges, AfterViewInit {
         return clicks.length;
       }),
       tap((clicks: number) => {
-        if (clicks >= 2 && !this.open) {
-          this.store.dispatch(openTodoEdit({ id: this.todo.id }));
-        } else {
-          this.store.dispatch(openTodoEdit({ id: -1 }));
+        this.store.dispatch(openTodoEdit({ id: null, edit: false }));
+
+        if (clicks >= 2) {
+          this.store.dispatch(openTodoEdit({ id: this.todo.id, edit: true }));
         }
       }),
       map(clicksLength => clicksLength >= 2)

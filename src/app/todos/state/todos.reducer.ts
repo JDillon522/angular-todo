@@ -9,13 +9,11 @@ import { clone, sortTodos } from '../../lib/utils';
 export interface ITodosState {
   filterMode: FILTER_MODES;
   todos: ITodo[];
-  editingTodoId: number;
 }
 
 export const initialState: ITodosState = {
   filterMode: 'All',
-  todos: [],
-  editingTodoId: null
+  todos: []
 };
 
 export function todosReducer(state: ITodosState, action: Action) {
@@ -34,7 +32,6 @@ export function todosReducer(state: ITodosState, action: Action) {
 
 export const filterMode = (state: ITodosState) => state.filterMode;
 export const todos = (state: ITodosState) => state.todos;
-export const editingTodo = (state: ITodosState) => state.editingTodoId;
 
 const syncTodos = (existingState: ITodosState, { todos }: ITodoActionSync): ITodosState => {
   const sorted = clone(todos).sort(sortTodos)
@@ -62,8 +59,7 @@ const editTodo = (existingState: ITodosState, todo: ITodoActionUpdate): ITodosSt
 
   return {
     ...existingState,
-    todos: todos,
-    editingTodoId: -1
+    todos: todos
   };
 }
 
@@ -98,10 +94,19 @@ const changeFilterMode = (existingState: ITodosState, { mode }: ITodoActionFilte
   };
 }
 
-const openTodoEdit = (existingState: ITodosState, { id }: ITodoActionEditTodo): ITodosState => {
+const openTodoEdit = (existingState: ITodosState, { id, edit }: ITodoActionEditTodo): ITodosState => {
+  const todos = clone(existingState.todos);
+
+  if (edit) {
+    const index = todos.findIndex(t => t.id === id);
+    todos[index].editing = edit;
+  } else {
+    todos.forEach(todo => todo.editing = false);
+  }
+
   return {
     ...existingState,
-    editingTodoId: id
+    todos
   };
 }
 

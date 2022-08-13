@@ -37,6 +37,8 @@ export class TodosService {
   }
 
   public updateTodoInDb(todo: ITodo): Observable<number> {
+    delete todo.editing;
+
     return from(this.db.todos.update(todo.id, todo)).pipe(
       map(numAffected => numAffected)
     );

@@ -21,4 +21,5 @@ export interface ITodoActionSync {
 
 export interface ITodoActionEditTodo {
   id: number;
+  edit: boolean;
 }

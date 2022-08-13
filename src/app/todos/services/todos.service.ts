@@ -20,7 +20,7 @@ export class TodosService {
      * Typescript would throw the error 'The property "pipe" does not exist on type "Observable"'
      * This was the only solution I found around it.
      */
-    return from(liveQuery(() => this.db.todos.toArray()));
+    return from(this.db.todos.toArray());
   }
 
   public addTodoToDb(text: string): Observable<ITodo> {

@@ -28,7 +28,7 @@ export function todosReducer(state: ITodosState, action: Action) {
     on(TodoActions.removeTodo, removeTodo),
     on(TodoActions.changeFilterMode, changeFilterMode),
     on(TodoActions.clearCompletedUi, clearCompletedUi),
-    on(TodoActions.openTodoEdit, editTodos)
+    on(TodoActions.openTodoEdit, openTodoEdit)
   )(state, action);
 }
 
@@ -57,15 +57,13 @@ const addTodoToUi = (existingState: ITodosState, todo: ITodoActionUpdate): ITodo
 
 const editTodo = (existingState: ITodosState, todo: ITodoActionUpdate): ITodosState => {
   const todos = clone(existingState.todos);
-  todos.forEach(innerTodo => {
-    if (innerTodo.id === todo.id) {
-      innerTodo = todo;
-    }
-  });
+  const index = todos.findIndex(t => t.id === todo.id);
+  todos[index] = todo;
 
   return {
     ...existingState,
     todos: todos,
+    editingTodoId: -1
   };
 }
 
@@ -83,12 +81,13 @@ const markAllCompleted = (existingState: ITodosState): ITodosState => {
 
 
 const removeTodo = (existingState: ITodosState, { id }: ITodoActionId): ITodosState => {
-  const updatedTodos = clone(existingState.todos);
-  updatedTodos.splice(id, 1);
+  const todos = clone(existingState.todos);
+  const index = todos.findIndex(t => t.id === id);
+  todos.splice(index, 1);
 
   return {
     ...existingState,
-    todos: updatedTodos,
+    todos: todos,
   };
 }
 
@@ -99,7 +98,7 @@ const changeFilterMode = (existingState: ITodosState, { mode }: ITodoActionFilte
   };
 }
 
-const editTodos = (existingState: ITodosState, { id }: ITodoActionEditTodo): ITodosState => {
+const openTodoEdit = (existingState: ITodosState, { id }: ITodoActionEditTodo): ITodosState => {
   return {
     ...existingState,
     editingTodoId: id

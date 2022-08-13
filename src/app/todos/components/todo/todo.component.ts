@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { BehaviorSubject, buffer, combineLatest, debounceTime, filter, forkJoin, fromEvent, map, Observable, Subject, tap } from 'rxjs';
+import { BehaviorSubject, buffer, combineLatest, debounceTime, filter, forkJoin, fromEvent, map, Observable, shareReplay, Subject, tap } from 'rxjs';
 import { ITodo } from '../../interfaces';
 import { ITodoForm } from '../../interfaces/ITodo';
 import { editTodo, openTodoEdit, removeTodo } from '../../state/todo.actions';
@@ -32,47 +32,65 @@ export class TodoComponent implements OnChanges, AfterViewInit {
     text: new FormControl(null, [Validators.required, Validators.minLength(1)])
   });
 
+  private open: boolean = false;
+
   constructor(
     private store: Store
   ) { }
 
   ngOnChanges(): void {
+    this.resetTodoForm();
+
+    // Make sure the correct edit field is open
+    if (this.todo && this.todoThatIsUnderEdit) {
+      this.open = this.todoThatIsUnderEdit === this.todo.id;
+      this.openEdit$.next(this.open);
+
+      if (!this.open) {
+        // Discard unsaved edits
+        this.resetTodoForm();
+      }
+    }
+  }
+
+  ngAfterViewInit(): void {
+    /**
+     * TODO: Stumped on Annoying Bug:
+     * It will open and close the edit on a double click, and close if another label is clicked
+     * However after submitting it will not open any other edit inputs until I usually dispatch
+     * another action. But even that is hit or miss.
+     */
+    this.click$ = fromEvent(this.todoLabel.nativeElement, 'click');
+
+    this.doubleClicked$ = this.click$.pipe(
+      buffer(this.click$.pipe(debounceTime(250))),
+      map((clicks: PointerEvent[]) => {
+        return clicks.length;
+      }),
+      tap((clicks: number) => {
+        if (clicks >= 2 && !this.open) {
+          this.store.dispatch(openTodoEdit({ id: this.todo.id }));
+        } else {
+          this.store.dispatch(openTodoEdit({ id: -1 }));
+        }
+      }),
+      map(clicksLength => clicksLength >= 2)
+    );
+  }
+
+  private resetTodoForm(): void {
     this.todoForm.setValue({
       id: this.todo.id,
       completed: this.todo?.completed || null,
       text: this.todo.text
     });
-
-    if (this.todo && this.todoThatIsUnderEdit) {
-      this.openEdit$.next(this.todoThatIsUnderEdit === this.todo.id);
-    }
-  }
-
-  ngAfterViewInit(): void {
-    if (this.todoLabel) {
-
-      this.click$ = fromEvent(this.todoLabel.nativeElement, 'click');
-
-      this.doubleClicked$ = this.click$.pipe(
-          buffer(this.click$.pipe(debounceTime(250))),
-          map((clicks: PointerEvent[]) => {
-            return clicks.length;
-          }),
-          tap((clicks: number) => {
-            if (clicks >= 2) {
-              this.store.dispatch(openTodoEdit({ id: this.todo.id }));
-            }
-          }),
-          map(clicksLength => clicksLength >= 2),
-        );
-    }
   }
 
   public deleteTodo(id: number) {
     this.store.dispatch(removeTodo({ id }));
   }
 
-  public toggleComplete() {
+  public editTodo() {
     this.store.dispatch(editTodo(this.todoForm.value as ITodo));
   }
 }

@@ -42,6 +42,12 @@ export class TodosService {
     );
   }
 
+  public markAllTodosComplete(todos: ITodo[]): Observable<number> {
+    return from(this.db.todos.bulkPut(todos)).pipe(
+      map(numAffected => numAffected)
+    );
+  }
+
   public removeTodoFromDb(id: number): Observable<number> {
     return from(this.db.todos.delete(id)).pipe(
       map(() => id)

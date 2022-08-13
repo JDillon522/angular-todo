@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { TodosService } from '../services/todos.service';
 import { createEffect, ofType, Actions } from '@ngrx/effects';
-import { addTodo, addTodoToUi, editTodo, getTodos, removeTodo, syncTodos } from './todo.actions';
-import { catchError, concatMap, from, map, mergeMap, of, switchMap, tap } from 'rxjs';
+import { addTodo, addTodoToUi, editTodo, getTodos, markAllCompleted, removeTodo, syncTodos } from './todo.actions';
+import { catchError, concatMap, from, map, mergeMap, of, switchMap, tap, withLatestFrom } from 'rxjs';
 import { Store } from '@ngrx/store';
+import { allTodos } from './todo.selectors';
 
 @Injectable()
 export class TodosEffect {
@@ -42,6 +43,16 @@ export class TodosEffect {
   public editTodo$ = createEffect(() => this.actions$.pipe(
     ofType(editTodo),
     mergeMap((payload) => this.todoService.updateTodoInDb(payload)),
+    // TODO handle event when zero rows are affected
+    // catchError(err => of('ADD TODO ERROR', err))
+  ),
+    { dispatch: false }
+  );
+
+  public markAllTodosComplete$ = createEffect(() => this.actions$.pipe(
+    ofType(markAllCompleted),
+    withLatestFrom(this.store.select(allTodos)),
+    mergeMap(([, todos]) => this.todoService.markAllTodosComplete(todos)),
     // TODO handle event when zero rows are affected
     // catchError(err => of('ADD TODO ERROR', err))
   ),

@@ -31,6 +31,10 @@ export const editTodo = createAction(
   props<ITodoActionUpdate>(),
 );
 
+export const markAllCompleted = createAction(
+  '[Todos] Mark all Todos complete'
+);
+
 export const changeFilterMode = createAction(
   '[Todos] Change Filter Mode',
   props<ITodoActionFilter>(),

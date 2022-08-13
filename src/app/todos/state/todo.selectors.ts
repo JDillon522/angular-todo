@@ -1,9 +1,14 @@
 import { createSelector, createFeatureSelector } from '@ngrx/store';
-import * as todosState from './todos.reducer';
+import * as TodosState from './todos.reducer';
 
-export const todosSelector = createFeatureSelector<todosState.ITodosState>('todos');
+export const todosSelector = createFeatureSelector<TodosState.ITodosState>('todos');
 
 export const allTodos = createSelector(
   todosSelector,
-  todosState.todos,
+  TodosState.todos,
+);
+
+export const allAreCompleted = createSelector(
+  todosSelector,
+  (state: TodosState.ITodosState) => state.todos.every(todo => todo.completed)
 );

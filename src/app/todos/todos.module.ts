@@ -10,18 +10,20 @@ import { todosReducer } from './state/todos.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { TodosEffect } from './state/todo.effects';
 import { TodoDb } from './services/db';
+import { TodoComponent } from './components/todo/todo.component';
 
 const DECLARATIONS = [
   CompleteAllComponent,
   TodosListComponent,
+  TodoComponent
 ];
 
 @NgModule({
   declarations: [
-    ...DECLARATIONS,
+    ...DECLARATIONS
   ],
   exports: [
-    ...DECLARATIONS,
+    ...DECLARATIONS
   ],
   imports: [
     CommonModule,

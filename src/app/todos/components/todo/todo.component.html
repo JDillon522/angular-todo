@@ -1,0 +1,5 @@
+<form [formGroup]="todoForm" class="view">
+  <input class="toggle" type="checkbox" formControlName="completed" (change)="toggleComplete()"/>
+  <label>{{ todo.text }}</label>
+  <button class="destroy" (click)="deleteTodo(todo.id)"></button>
+</form>

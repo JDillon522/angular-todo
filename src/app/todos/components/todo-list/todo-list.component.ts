@@ -18,8 +18,4 @@ export class TodosListComponent {
   constructor(
     private store: Store
   ) {}
-
-  public deleteTodo(id: number) {
-    this.store.dispatch(removeTodo({ index: id }));
-  }
 }

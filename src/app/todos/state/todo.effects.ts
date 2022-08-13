@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TodosService } from '../services/todos.service';
 import { createEffect, ofType, Actions } from '@ngrx/effects';
-import { addTodo, getTodos, syncTodos } from './todo.actions';
+import { addTodo, getTodos, removeTodo, syncTodos } from './todo.actions';
 import { catchError, from, map, mergeMap, of, switchMap, tap } from 'rxjs';
 import { Store } from '@ngrx/store';
 
@@ -28,7 +28,14 @@ export class TodosEffect {
       mergeMap((payload) => this.todoService.addTodoToDb(payload.text)),
       map(() => getTodos()),
       // catchError(err => of('ADD TODO ERROR', err))
-
     )
   );
+
+  public removeTodo$ =  createEffect(() => this.actions$.pipe(
+    ofType(removeTodo),
+    mergeMap((payload) => this.todoService.removeTodoFromDb(payload.index)),
+    map(() => getTodos()),
+    // catchError(err => of('ADD TODO ERROR', err))
+  )
+);
 };

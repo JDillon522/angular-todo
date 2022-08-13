@@ -3,7 +3,7 @@
     <div class="view">
       <input class="toggle" type="checkbox" />
       <label>{{ todo.text }}</label>
-      <button class="destroy"></button>
+      <button class="destroy" (click)="deleteTodo(todo.id)"></button>
     </div>
   </li>
 </ul>

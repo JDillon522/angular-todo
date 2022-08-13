@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { ITodo } from '../../interfaces';
+import { removeTodo } from '../../state/todo.actions';
 import { allTodos } from '../../state/todo.selectors';
 
 @Component({
@@ -17,4 +18,8 @@ export class TodosListComponent {
   constructor(
     private store: Store
   ) {}
+
+  public deleteTodo(id: number) {
+    this.store.dispatch(removeTodo({ index: id }));
+  }
 }

@@ -3,17 +3,19 @@ import * as TodoActions from './todo.actions';
 
 import { FILTER_MODES } from './../constants/filter-modes';
 import { ITodo } from '../interfaces/ITodo';
-import { ITodoActionCreate, ITodoActionId, ITodoActionFilter, ITodoActionSync, ITodoActionUpdate } from '../interfaces/IActions';
+import { ITodoActionCreate, ITodoActionId, ITodoActionFilter, ITodoActionSync, ITodoActionUpdate, ITodoActionEditTodo } from '../interfaces/IActions';
 import { clone, sortTodos } from '../../lib/utils';
 
 export interface ITodosState {
-  filterMode?: FILTER_MODES;
-  todos?: ITodo[];
+  filterMode: FILTER_MODES;
+  todos: ITodo[];
+  editingTodoId: number;
 }
 
 export const initialState: ITodosState = {
   filterMode: 'All',
   todos: [],
+  editingTodoId: null
 };
 
 export function todosReducer(state: ITodosState, action: Action) {
@@ -25,12 +27,14 @@ export function todosReducer(state: ITodosState, action: Action) {
     on(TodoActions.markAllCompleted, markAllCompleted),
     on(TodoActions.removeTodo, removeTodo),
     on(TodoActions.changeFilterMode, changeFilterMode),
-    on(TodoActions.clearCompleted, clearCompleted),
+    on(TodoActions.clearCompletedUi, clearCompletedUi),
+    on(TodoActions.openTodoEdit, editTodos)
   )(state, action);
 }
 
 export const filterMode = (state: ITodosState) => state.filterMode;
 export const todos = (state: ITodosState) => state.todos;
+export const editingTodo = (state: ITodosState) => state.editingTodoId;
 
 const syncTodos = (existingState: ITodosState, { todos }: ITodoActionSync): ITodosState => {
   const sorted = clone(todos).sort(sortTodos)
@@ -95,7 +99,14 @@ const changeFilterMode = (existingState: ITodosState, { mode }: ITodoActionFilte
   };
 }
 
-const clearCompleted = (existingState: ITodosState): ITodosState => {
+const editTodos = (existingState: ITodosState, { id }: ITodoActionEditTodo): ITodosState => {
+  return {
+    ...existingState,
+    editingTodoId: id
+  };
+}
+
+const clearCompletedUi = (existingState: ITodosState): ITodosState => {
   return {
     ...existingState,
     todos: [...existingState.todos.filter(todo => !todo.completed)],

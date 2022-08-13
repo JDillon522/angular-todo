@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { TodosService } from '../services/todos.service';
 import { createEffect, ofType, Actions } from '@ngrx/effects';
-import { addTodo, addTodoToUi, editTodo, getTodos, markAllCompleted, removeTodo, syncTodos } from './todo.actions';
+import { addTodo, addTodoToUi, editTodo, getTodos, markAllCompleted, removeTodo, syncTodos, clearCompleted, clearCompletedUi } from './todo.actions';
 import { catchError, concatMap, from, map, mergeMap, of, switchMap, tap, withLatestFrom } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { allTodos } from './todo.selectors';
+import { allCompletedTodos, allTodos } from './todo.selectors';
 
 @Injectable()
 export class TodosEffect {
@@ -39,6 +39,16 @@ export class TodosEffect {
   ),
     { dispatch: false }
   );
+
+  public removeCompleted$ = createEffect(() => this.actions$.pipe(
+    ofType(clearCompleted),
+    withLatestFrom(this.store.select(allCompletedTodos)),
+    mergeMap(([, todos]) => this.todoService.removeAllCompletedTodoFromDb(todos.map(todo => todo.id))),
+    map(() => {
+      return clearCompletedUi();
+    })
+    // catchError(err => of('ADD TODO ERROR', err))
+  ));
 
   public editTodo$ = createEffect(() => this.actions$.pipe(
     ofType(editTodo),

@@ -1,5 +1,16 @@
-<form [formGroup]="todoForm" class="view">
-  <input class="toggle" type="checkbox" formControlName="completed" (change)="toggleComplete()"/>
-  <label>{{ todo.text }}</label>
+<form [formGroup]="todoForm" class="view" enctype="application/x-www-form-urlencoded" role="form" >
+  <input class="toggle"
+        type="checkbox"
+        formControlName="completed"
+        (change)="toggleComplete()"/>
+
+  <input *ngIf="(doubleClicked$ | async) && (openEdit$ | async)"
+        formControlName="text"
+        class="new-todo"
+        placeholder="What needs to be done"
+        autofocus>
+
+  <label #todoLabel *ngIf="!(doubleClicked$ | async) || !(openEdit$ | async)">{{ todo.text }}</label>
+
   <button class="destroy" (click)="deleteTodo(todo.id)"></button>
 </form>

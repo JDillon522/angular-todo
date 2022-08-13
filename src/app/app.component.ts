@@ -5,7 +5,7 @@ import { liveQuery } from 'dexie';
 import { Observable } from 'rxjs';
 import { FILTER_MODES } from './todos/constants/filter-modes';
 import { db } from './todos/services/db';
-import { addTodo, changeFilterMode, getTodos } from './todos/state/todo.actions';
+import { addTodo, changeFilterMode, clearCompleted, getTodos } from './todos/state/todo.actions';
 import { allTodos, currentFilter } from './todos/state/todo.selectors';
 
 @Component({
@@ -40,5 +40,9 @@ export class AppComponent implements OnInit {
 
   public toggleFilter(filter: FILTER_MODES): void {
     this.store.dispatch(changeFilterMode({ mode: filter }));
+  }
+
+  public clearCompleted(): void {
+    this.store.dispatch(clearCompleted());
   }
 }

@@ -18,3 +18,7 @@ export interface ITodoActionFilter {
 export interface ITodoActionSync {
   todos: ITodo[];
 }
+
+export interface ITodoActionEditTodo {
+  id: number;
+}

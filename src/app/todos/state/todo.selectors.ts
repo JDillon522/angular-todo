@@ -24,6 +24,11 @@ export const filteredTodos = createSelector(
   })
 )
 
+export const allCompletedTodos = createSelector(
+  todosSelector,
+  (state: TodosState.ITodosState) => state.todos.filter(todo => todo.completed)
+);
+
 export const allAreCompleted = createSelector(
   todosSelector,
   (state: TodosState.ITodosState) => state.todos.every(todo => todo.completed)
@@ -32,4 +37,9 @@ export const allAreCompleted = createSelector(
 export const currentFilter = createSelector(
   todosSelector,
   TodosState.filterMode
+);
+
+export const editingATodo = createSelector(
+  todosSelector,
+  TodosState.editingTodo
 );

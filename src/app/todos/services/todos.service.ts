@@ -53,4 +53,10 @@ export class TodosService {
       map(() => id)
     );
   }
+
+  public removeAllCompletedTodoFromDb(ids: number[]): Observable<number> {
+    return from(this.db.todos.bulkDelete(ids)).pipe(
+      map(() => 5)
+    );
+  }
 }

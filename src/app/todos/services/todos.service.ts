@@ -13,13 +13,6 @@ export class TodosService {
   ) { }
 
   public getTodosFromDb() {
-    /**
-     * Bizarre Bug Note:
-     * I had to wrap `liveQuery` with the `from` operator because even though
-     * I could subscribe to the `liveQuery` result and even that it was an Observable.
-     * Typescript would throw the error 'The property "pipe" does not exist on type "Observable"'
-     * This was the only solution I found around it.
-     */
     return from(this.db.todos.toArray());
   }
 

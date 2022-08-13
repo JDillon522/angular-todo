@@ -1,16 +1,16 @@
 import { createSelector, createFeatureSelector } from '@ngrx/store';
-import * as TodosState from './todos.reducer';
+import { ITodosState } from './todos.reducer';
 
-export const todosSelector = createFeatureSelector<TodosState.ITodosState>('todos');
+export const todosSelector = createFeatureSelector<ITodosState>('todos');
 
 export const allTodos = createSelector(
   todosSelector,
-  TodosState.todos,
+  (state: ITodosState) => state.todos
 );
 
 export const filteredTodos = createSelector(
   todosSelector,
-  (state: TodosState.ITodosState) => state.todos.filter(todo => {
+  (state: ITodosState) => state.todos.filter(todo => {
     switch (state.filterMode) {
       case 'Active':
         return !todo.completed;
@@ -22,20 +22,20 @@ export const filteredTodos = createSelector(
         return true;
     }
   })
-)
+);
 
 export const allCompletedTodos = createSelector(
   todosSelector,
-  (state: TodosState.ITodosState) => state.todos.filter(todo => todo.completed)
+  (state: ITodosState) => state.todos.filter(todo => todo.completed)
 );
 
 export const allAreCompleted = createSelector(
   todosSelector,
-  (state: TodosState.ITodosState) => state.todos.every(todo => todo.completed)
+  (state: ITodosState) => state.todos.every(todo => todo.completed)
 );
 
 export const currentFilter = createSelector(
   todosSelector,
-  TodosState.filterMode
+  (state: ITodosState) => state.filterMode
 );
 

@@ -30,9 +30,6 @@ export function todosReducer(state: ITodosState, action: Action) {
   )(state, action);
 }
 
-export const filterMode = (state: ITodosState) => state.filterMode;
-export const todos = (state: ITodosState) => state.todos;
-
 const syncTodos = (existingState: ITodosState, { todos }: ITodoActionSync): ITodosState => {
   const sorted = clone(todos).sort(sortTodos)
 

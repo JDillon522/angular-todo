@@ -23,3 +23,7 @@ export interface ITodoActionEditTodo {
   id: number;
   edit: boolean;
 }
+
+export interface ITodoActionError {
+  err: any;
+}

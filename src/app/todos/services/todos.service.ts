@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { from, map, Observable, tap } from 'rxjs';
-import { liveQuery } from 'dexie';
+import { from, map, Observable } from 'rxjs';
 import { TodoDb } from './db';
-import { ITodo } from '../interfaces';
+import { ITodo } from '../interfaces/ITodo';
 
 
 @Injectable()
@@ -17,6 +16,10 @@ export class TodosService {
   }
 
   public addTodoToDb(text: string): Observable<ITodo> {
+    if (!text) {
+      throw new Error('Invalid request');
+    }
+
     const todo: ITodo = {
       text: text,
       completed: false
@@ -30,6 +33,10 @@ export class TodosService {
   }
 
   public updateTodoInDb(todo: ITodo): Observable<number> {
+    if (!todo) {
+      throw new Error('Invalid request');
+    }
+
     delete todo.editing;
 
     return from(this.db.todos.update(todo.id, todo)).pipe(
@@ -38,18 +45,30 @@ export class TodosService {
   }
 
   public markAllTodosComplete(todos: ITodo[]): Observable<number> {
+    if (!todos?.length) {
+      throw new Error('Invalid request');
+    }
+
     return from(this.db.todos.bulkPut(todos)).pipe(
       map(numAffected => numAffected)
     );
   }
 
   public removeTodoFromDb(id: number): Observable<number> {
+    if (!id) {
+      throw new Error('Invalid request');
+    }
+
     return from(this.db.todos.delete(id)).pipe(
       map(() => id)
     );
   }
 
   public removeAllCompletedTodoFromDb(ids: number[]): Observable<number> {
+    if (!ids?.length) {
+      throw new Error('Invalid request');
+    }
+
     return from(this.db.todos.bulkDelete(ids)).pipe(
       map(() => 5)
     );

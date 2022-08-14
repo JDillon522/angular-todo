@@ -1,3 +1,7 @@
-.hidden-todo {
-  display: none;
+input[type=checkbox] {
+  cursor: pointer;
+}
+
+form {
+  display: flex;
 }

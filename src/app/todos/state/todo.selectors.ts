@@ -53,4 +53,9 @@ export const noResultsMessage = createSelector(
         return 'Looks like you need more work...';
     }
   }
-)
+);
+
+export const errors = createSelector(
+  todosSelector,
+  (state: ITodosState) => state.errors
+);

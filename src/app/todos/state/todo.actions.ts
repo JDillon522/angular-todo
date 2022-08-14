@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { FILTER_MODES } from '../constants/filter-modes';
-import { ITodoActionCreate, ITodoActionId, ITodoActionUpdate, ITodoActionFilter, ITodoActionSync, ITodoActionEditTodo } from '../interfaces/IActions';
+import { ITodoActionCreate, ITodoActionId, ITodoActionUpdate, ITodoActionFilter, ITodoActionSync, ITodoActionEditTodo, ITodoActionError } from '../interfaces/IActions';
 
 export const getTodos = createAction(
   '[TODO] Get Todos'
@@ -51,4 +51,9 @@ export const clearCompletedUi = createAction(
 export const openTodoEdit = createAction(
   '[Todos] Open a todo for edits',
   props<ITodoActionEditTodo>()
+);
+
+export const genericError = createAction(
+  '[Todo ERROR] Generic error',
+  props<ITodoActionError>()
 );

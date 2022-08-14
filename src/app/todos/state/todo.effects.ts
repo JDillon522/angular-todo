@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import { TodosService } from '../services/todos.service';
 import { createEffect, ofType, Actions } from '@ngrx/effects';
-import { addTodo, addTodoToUi, editTodo, getTodos, markAllCompleted, removeTodo, syncTodos, clearCompleted, clearCompletedUi } from './todo.actions';
-import { catchError, concatMap, from, map, mergeMap, of, switchMap, tap, withLatestFrom, take } from 'rxjs';
+import {
+  addTodo, addTodoToUi, editTodo, getTodos, markAllCompleted, removeTodo, syncTodos,
+  clearCompleted, clearCompletedUi, genericError
+} from './todo.actions';
+import { catchError, map, mergeMap, of, switchMap, withLatestFrom, take } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { allCompletedTodos, allTodos } from './todo.selectors';
 
@@ -17,11 +20,9 @@ export class TodosEffect {
   public getTodos$ = createEffect(() => this.actions$.pipe(
     ofType(getTodos),
     take(1),
-    switchMap(() => this.todoService.getTodosFromDb().pipe(
-      map(todos => syncTodos({ todos }),
-        // catchError(err => of('GET TODOS ERROR', err))
-      ))
-    )
+    switchMap(() => this.todoService.getTodosFromDb()),
+    map(todos => syncTodos({ todos })),
+    catchError((err) => of({ type: genericError.type, err: err }))
   ));
 
   public addTodo$ = createEffect(() => this.actions$.pipe(
@@ -30,13 +31,13 @@ export class TodosEffect {
     map((todo) => {
       return addTodoToUi(todo);
     }),
-    // catchError(err => of('ADD TODO ERROR', err))
+    catchError((err) => of({ type: genericError.type, err: err }))
   ));
 
   public removeTodo$ = createEffect(() => this.actions$.pipe(
     ofType(removeTodo),
     mergeMap((payload) => this.todoService.removeTodoFromDb(payload.id)),
-    // catchError(err => of('ADD TODO ERROR', err))
+    catchError((err) => of({ type: genericError.type, err: err }))
   ),
     { dispatch: false }
   );
@@ -44,18 +45,20 @@ export class TodosEffect {
   public removeCompleted$ = createEffect(() => this.actions$.pipe(
     ofType(clearCompleted),
     withLatestFrom(this.store.select(allCompletedTodos)),
-    mergeMap(([, todos]) => this.todoService.removeAllCompletedTodoFromDb(todos.map(todo => todo.id))),
+    mergeMap(([, todos]) => {
+      const completed = todos.map(todo => todo.id);
+      return this.todoService.removeAllCompletedTodoFromDb(completed);
+    }),
     map(() => {
       return clearCompletedUi();
-    })
-    // catchError(err => of('ADD TODO ERROR', err))
+    }),
+    catchError((err) => of({ type: genericError.type, err: err }))
   ));
 
   public editTodo$ = createEffect(() => this.actions$.pipe(
     ofType(editTodo),
     mergeMap((payload) => this.todoService.updateTodoInDb(payload)),
-    // TODO handle event when zero rows are affected
-    // catchError(err => of('ADD TODO ERROR', err))
+    catchError((err) => of({ type: genericError.type, err: err }))
   ),
     { dispatch: false }
   );
@@ -64,8 +67,7 @@ export class TodosEffect {
     ofType(markAllCompleted),
     withLatestFrom(this.store.select(allTodos)),
     mergeMap(([, todos]) => this.todoService.markAllTodosComplete(todos)),
-    // TODO handle event when zero rows are affected
-    // catchError(err => of('ADD TODO ERROR', err))
+    catchError((err) => of({ type: genericError.type, err: err }))
   ),
     { dispatch: false }
   );

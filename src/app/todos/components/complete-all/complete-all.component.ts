@@ -3,9 +3,9 @@ import { Observable, Subscription } from 'rxjs';
 
 import { TodosService } from '@app/todos/services/todos.service';
 import { Store } from '@ngrx/store';
-import { ITodo } from '../../interfaces';
 import { allAreCompleted, allTodos } from '../../state/todo.selectors';
 import { markAllCompleted } from '../../state/todo.actions';
+import { ITodo } from '../../interfaces/ITodo';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

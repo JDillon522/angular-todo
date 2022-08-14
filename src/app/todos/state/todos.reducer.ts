@@ -3,17 +3,19 @@ import * as TodoActions from './todo.actions';
 
 import { FILTER_MODES } from './../constants/filter-modes';
 import { ITodo } from '../interfaces/ITodo';
-import { ITodoActionCreate, ITodoActionId, ITodoActionFilter, ITodoActionSync, ITodoActionUpdate, ITodoActionEditTodo } from '../interfaces/IActions';
+import { ITodoActionCreate, ITodoActionId, ITodoActionFilter, ITodoActionSync, ITodoActionUpdate, ITodoActionEditTodo, ITodoActionError } from '../interfaces/IActions';
 import { clone, sortTodos } from '../../lib/utils';
 
 export interface ITodosState {
   filterMode: FILTER_MODES;
   todos: ITodo[];
+  errors: string;
 }
 
 export const initialState: ITodosState = {
   filterMode: 'All',
-  todos: []
+  todos: [],
+  errors: null
 };
 
 export function todosReducer(state: ITodosState, action: Action) {
@@ -26,7 +28,8 @@ export function todosReducer(state: ITodosState, action: Action) {
     on(TodoActions.removeTodo, removeTodo),
     on(TodoActions.changeFilterMode, changeFilterMode),
     on(TodoActions.clearCompletedUi, clearCompletedUi),
-    on(TodoActions.openTodoEdit, openTodoEdit)
+    on(TodoActions.openTodoEdit, openTodoEdit),
+    on(TodoActions.genericError, handleErrors)
   )(state, action);
 }
 
@@ -72,7 +75,6 @@ const markAllCompleted = (existingState: ITodosState): ITodosState => {
   };
 }
 
-
 const removeTodo = (existingState: ITodosState, { id }: ITodoActionId): ITodosState => {
   const todos = clone(existingState.todos);
   const index = todos.findIndex(t => t.id === id);
@@ -112,4 +114,11 @@ const clearCompletedUi = (existingState: ITodosState): ITodosState => {
     ...existingState,
     todos: [...existingState.todos.filter(todo => !todo.completed)],
   };
+}
+
+const handleErrors = (existingState: ITodosState, { err }: ITodoActionError): ITodosState => {
+  return {
+    ...existingState,
+    errors: err
+  }
 }

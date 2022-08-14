@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import Dexie, { Table } from 'dexie';
-import { ITodo } from '../interfaces';
+import { ITodo } from '../interfaces/ITodo';
 
 @Injectable()
 export class TodoDb extends Dexie {

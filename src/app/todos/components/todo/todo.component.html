@@ -8,8 +8,7 @@
     <input class="toggle"
       type="checkbox"
       formControlName="completed"
-      (change)="editTodo()"
-      [ngClass]="{'hidden-todo': todo.editing}"/>
+      (change)="editTodo()"/>
 
     <label [ngClass]="{'hidden-todo': todo.editing}">{{ todo.text }}</label>
     <button class="destroy" (click)="deleteTodo(todo.id)"></button>
@@ -26,6 +25,7 @@
     <input formControlName="text"
       class="edit"
       placeholder="What needs to be done"
+      #editInput
       autofocus>
   </form>
 

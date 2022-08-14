@@ -1,44 +1,110 @@
 import { initialState, ITodosState, todosReducer } from './todos.reducer';
-import { ITodo } from './../interfaces';
-import * as TodoActions from './todo.actions';
-
+import { addTodoToUi, editTodo, getTodos, markAllCompleted, openTodoEdit, syncTodos } from './todo.actions';
+import { TodosService } from '../services/todos.service';
 import { clone } from '@app/lib/utils';
+import { ITodo } from '../interfaces/ITodo';
+import { TestBed } from '@angular/core/testing';
+import { MOCK_INITIAL_STATE, MOCK_TODOS, MOCK_TODOS_SORTED } from './testing/mocks';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
+import { Store } from '@ngrx/store';
 
 describe('Todos Reducer', () => {
   let state: ITodosState;
+  let todoServiceSpy: jasmine.SpyObj<TodosService>;
+  let store: MockStore;
+  const initialState = MOCK_INITIAL_STATE;
+  let initialStateWithTodos = {...initialState, todos: MOCK_TODOS};
 
   beforeEach(() => {
-    state = clone(initialState);
-    expect(state).toEqual(initialState);
+    const spy = jasmine.createSpyObj('TodoService', ['getTodosFromDb']);
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideMockStore({
+          initialState: MOCK_INITIAL_STATE
+        }),
+        { provide: TodosService, useValue: spy}
+      ]
+    });
+
+    store = TestBed.inject(MockStore);
+    todoServiceSpy = TestBed.inject(TodosService) as jasmine.SpyObj<TodosService>;
+    initialStateWithTodos = clone({...initialState, todos: MOCK_TODOS});
   });
 
-  describe('Add Todo', () => {
-    it('Should add a new Todo', () => {
-      const text = 'New todo';
-      const todo: ITodo = {
-        text,
-        completed: false,
-      };
-
-      const newState = todosReducer(state, TodoActions.addTodo({ text }));
-      expect(newState.todos).toEqual([todo]);
+  describe('Get Todos', () => {
+    it('Should sync all the todos from IndexDB', () => {
+      const newState = {...initialState, todos: MOCK_TODOS_SORTED};
+      const action = syncTodos({ todos: MOCK_TODOS });
+      const state = todosReducer(initialState, action);
+      expect(state).toEqual(newState);
     });
   });
 
-  describe('Remove Todo', () => {
-    it('should remove a Todo', () => {
-      const text1 = 'Todo 1';
-      const todo1: ITodo = {
-        text: text1,
+  describe('Add Todos', () => {
+    it('Should add Todo to the state', () => {
+      const newTodo: ITodo = {
+        id: 8675309,
+        text: 'Dummy',
         completed: false,
+        editing: false
       };
 
-      let newState: ITodosState;
+      const newState = {
+        ...initialStateWithTodos,
+        todos: [ newTodo, ...MOCK_TODOS]
+      };
+      const action = addTodoToUi(newTodo);
+      const state = todosReducer(initialStateWithTodos, action);
 
-      newState = todosReducer(state, TodoActions.addTodo({ text: text1 }));
-      newState = todosReducer(newState, TodoActions.addTodo({ text: 'Todo 2' }));
-      newState = todosReducer(newState, TodoActions.removeTodo({ index: 0 }));
-      expect(newState.todos).toEqual([todo1]);
+      expect(state.todos.length).toEqual(newState.todos.length);
+      expect(state.todos[0].id).toBe(newState.todos[0].id);
+    });
+  });
+
+  describe('Edit Todos', () => {
+    it('Should edit a Todo', () => {
+      const updated: ITodo = clone(MOCK_TODOS[0]);
+      updated.completed = true;
+      updated.text = 'Once more into the breach';
+      updated.editing = true;
+
+      const newState = {...initialStateWithTodos};
+      newState.todos[0] = updated;
+
+      const action = editTodo(updated);
+      const state = todosReducer(initialStateWithTodos, action);
+
+      expect(state.todos[0].completed).toEqual(newState.todos[0].completed);
+      expect(state.todos[0].text).toEqual(newState.todos[0].text);
+      expect(state.todos[0].editing).toEqual(newState.todos[0].editing);
+    });
+
+    it('Should mark all Todos Complete', () => {
+      const action = markAllCompleted();
+      const state = todosReducer(initialStateWithTodos, action);
+
+      state.todos.forEach(todo => {
+        expect(todo.completed).toBeTrue();
+      });
+    });
+
+    it('Should set Todo Editing correctly', () => {
+      let compareTodo = initialStateWithTodos.todos[0];
+      let action = openTodoEdit({ id: compareTodo.id, edit: true });
+      let state = todosReducer(initialStateWithTodos, action);
+
+      expect(state.todos[0].editing).toBeTrue();
+      expect(state.todos[1].editing).toBeFalse();
+      expect(state.todos[2].editing).toBeFalse();
+
+      action = openTodoEdit({ id: null, edit: false });
+      state = todosReducer(initialStateWithTodos, action);
+
+      state.todos.forEach(todo => {
+        expect(todo.editing).toBeFalse();
+      });
     });
   });
 });

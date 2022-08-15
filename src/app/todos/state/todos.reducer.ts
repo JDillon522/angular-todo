@@ -9,7 +9,7 @@ import { clone, sortTodos } from '../../lib/utils';
 export interface ITodosState {
   filterMode: FILTER_MODES;
   todos: ITodo[];
-  errors: string;
+  errors: string | Error;
 }
 
 export const initialState: ITodosState = {
@@ -29,7 +29,7 @@ export function todosReducer(state: ITodosState, action: Action) {
     on(TodoActions.changeFilterMode, changeFilterMode),
     on(TodoActions.clearCompletedUi, clearCompletedUi),
     on(TodoActions.openTodoEdit, openTodoEdit),
-    on(TodoActions.genericError, handleErrors)
+    on(TodoActions.genericError, genericError)
   )(state, action);
 }
 
@@ -55,6 +55,14 @@ const addTodoToUi = (existingState: ITodosState, todo: ITodoActionUpdate): ITodo
 const editTodo = (existingState: ITodosState, todo: ITodoActionUpdate): ITodosState => {
   const todos = clone(existingState.todos);
   const index = todos.findIndex(t => t.id === todo.id);
+
+  if (index === -1) {
+    return {
+      ...existingState,
+      errors: `Cannot edit Todo with ID: ${todo.id}.`
+    }
+  }
+
   todos[index] = todo;
 
   return {
@@ -78,6 +86,14 @@ const markAllCompleted = (existingState: ITodosState): ITodosState => {
 const removeTodo = (existingState: ITodosState, { id }: ITodoActionId): ITodosState => {
   const todos = clone(existingState.todos);
   const index = todos.findIndex(t => t.id === id);
+
+  if (index === -1) {
+    return {
+      ...existingState,
+      errors: `Cannot delete Todo with ID: ${id}.`
+    }
+  }
+
   todos.splice(index, 1);
 
   return {
@@ -98,6 +114,13 @@ const openTodoEdit = (existingState: ITodosState, { id, edit }: ITodoActionEditT
 
   if (edit) {
     const index = todos.findIndex(t => t.id === id);
+    if (index === -1) {
+      return {
+        ...existingState,
+        errors: `Cannot open Todo with ID: ${id}.`
+      }
+    }
+
     todos[index].editing = edit;
   } else {
     todos.forEach(todo => todo.editing = false);
@@ -116,7 +139,11 @@ const clearCompletedUi = (existingState: ITodosState): ITodosState => {
   };
 }
 
-const handleErrors = (existingState: ITodosState, { err }: ITodoActionError): ITodosState => {
+const genericError = (existingState: ITodosState, { err }: ITodoActionError): ITodosState => {
+  if (err instanceof Error) {
+    err = err.message;
+  }
+
   return {
     ...existingState,
     errors: err

@@ -25,5 +25,5 @@ export interface ITodoActionEditTodo {
 }
 
 export interface ITodoActionError {
-  err: any;
+  err: string | Error;
 }

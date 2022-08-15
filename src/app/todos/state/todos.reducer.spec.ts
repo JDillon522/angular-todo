@@ -1,16 +1,13 @@
-import { initialState, ITodosState, todosReducer } from './todos.reducer';
-import { addTodoToUi, editTodo, getTodos, markAllCompleted, openTodoEdit, syncTodos } from './todo.actions';
+import { ITodosState, todosReducer } from './todos.reducer';
+import { addTodoToUi, changeFilterMode, clearCompletedUi, editTodo, genericError, markAllCompleted, openTodoEdit, removeTodo, syncTodos } from './todo.actions';
 import { TodosService } from '../services/todos.service';
 import { clone } from '@app/lib/utils';
 import { ITodo } from '../interfaces/ITodo';
 import { TestBed } from '@angular/core/testing';
 import { MOCK_INITIAL_STATE, MOCK_TODOS, MOCK_TODOS_SORTED } from './testing/mocks';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
-import { Store } from '@ngrx/store';
 
 describe('Todos Reducer', () => {
-  let state: ITodosState;
   let todoServiceSpy: jasmine.SpyObj<TodosService>;
   let store: MockStore;
   const initialState = MOCK_INITIAL_STATE;
@@ -90,7 +87,7 @@ describe('Todos Reducer', () => {
       });
     });
 
-    it('Should set Todo Editing correctly', () => {
+    it('Should open Todo for editing correctly', () => {
       let compareTodo = initialStateWithTodos.todos[0];
       let action = openTodoEdit({ id: compareTodo.id, edit: true });
       let state = todosReducer(initialStateWithTodos, action);
@@ -105,6 +102,84 @@ describe('Todos Reducer', () => {
       state.todos.forEach(todo => {
         expect(todo.editing).toBeFalse();
       });
+    });
+
+    it('Should set error if Todo doesnt exist', () => {
+      const updated: ITodo = clone(MOCK_TODOS[0]);
+      updated.id = 123;
+
+      const action = editTodo(updated);
+      const state = todosReducer(initialStateWithTodos, action);
+      expect(state.errors).toEqual('Cannot edit Todo with ID: 123.');
+    });
+
+    it('Should set error while opening a Todo for editing if Todo doesnt exist', () => {
+      const action = openTodoEdit({ id: 123, edit: true });
+      const state = todosReducer(initialStateWithTodos, action);
+      expect(state.errors).toEqual('Cannot open Todo with ID: 123.');
+    });
+  });
+
+  describe('Remove Todos', () => {
+    it('Should remove a single todo', () => {
+      const action = removeTodo({ id: 1 });
+      const state = todosReducer(initialStateWithTodos, action);
+      const deletedTodo = state.todos.find(todo => todo.id === 1);
+
+      expect(state.todos.length).toBe(2);
+      expect(deletedTodo).toBeUndefined();
+    });
+
+    it('Should set an error if the Todo doesnt exist', () => {
+      const action = removeTodo({ id: 123 });
+      const state = todosReducer(initialStateWithTodos, action);
+
+      expect(state.todos.length).toBe(3);
+      expect(state.errors).toBe('Cannot delete Todo with ID: 123.')
+    });
+
+    it('Should clear all completed Todos', () => {
+      let updated: ITodo = clone(MOCK_TODOS[0]);
+      updated.completed = true;
+
+      let updateAction = editTodo(updated);
+      let state = todosReducer(initialStateWithTodos, updateAction);
+
+      updated = clone(MOCK_TODOS[1]);
+      updated.completed = true;
+
+      updateAction = editTodo(updated);
+      state = todosReducer(state, updateAction);
+
+      const clearAction = clearCompletedUi();
+      state = todosReducer(state, clearAction);
+
+      expect(state.todos.length).toBe(1);
+    });
+  });
+
+  describe('Filter Mode', () => {
+    it('Should change the filter mode', () => {
+      const action = changeFilterMode({ mode: 'Completed' });
+      const state = todosReducer(initialStateWithTodos, action);
+
+      expect(state.filterMode).toBe('Completed');
+    });
+  });
+
+  describe('Errors', () => {
+    it('Should handle string errors', () => {
+      const err = 'This is an error';
+      const action = genericError({ err: err });
+      const state = todosReducer(initialStateWithTodos, action);
+      expect(state.errors).toEqual(err);
+    });
+
+    it('Should handle Error constructor', () => {
+      const err = 'This is an error';
+      const action = genericError({ err: new Error(err) });
+      const state = todosReducer(initialStateWithTodos, action);
+      expect(state.errors).toEqual(err);
     });
   });
 });

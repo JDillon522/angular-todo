@@ -7,7 +7,7 @@ import { TodosService } from "../services/todos.service";
 import { MOCK_INITIAL_STATE, MOCK_NEW_TODO, MOCK_TODOS } from "./testing/mocks";
 import { TodosEffect } from "./todo.effects";
 import { initialState } from "./todos.reducer";
-import { addTodo, addTodoToUi, editTodo, editTodoUi, genericError, getTodos, removeTodo, removeTodoUi, syncTodos } from "./todo.actions";
+import { addTodo, addTodoToUi, editTodo, editTodoUi, genericError, getTodos, markAllCompleted, markAllCompletedUi, removeTodo, removeTodoUi, syncTodos } from "./todo.actions";
 
 
 describe('Effects', () => {
@@ -23,13 +23,15 @@ describe('Effects', () => {
       'getTodosFromDb',
       'addTodoToDb',
       'removeTodoFromDb',
-      'updateTodoInDb'
+      'updateTodoInDb',
+      'markAllTodosComplete'
     ]);
     const stub = MOCK_TODOS;
     spy.getTodosFromDb.and.returnValue(of(stub));
     spy.addTodoToDb.and.returnValue(of(newTodoWithId));
     spy.removeTodoFromDb.and.returnValue(of(removeTodoIndex));
     spy.updateTodoInDb.and.returnValue(of(afterEditTodo));
+    spy.markAllTodosComplete.and.returnValue(of(3));
 
     TestBed.configureTestingModule({
       providers: [
@@ -90,6 +92,17 @@ describe('Effects', () => {
     expect(result).toEqual({
       type: editTodoUi.type,
       todo: afterEditTodo
+    });
+
+    done();
+  });
+
+  it('Should mark all completed', async (done) => {
+    actions$ = of(markAllCompleted());
+
+    const result = await firstValueFrom(effect.markAllTodosComplete$);
+    expect(result).toEqual({
+      type: markAllCompletedUi.type
     });
 
     done();

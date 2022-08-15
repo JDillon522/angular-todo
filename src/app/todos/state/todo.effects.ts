@@ -3,7 +3,7 @@ import { TodosService } from '../services/todos.service';
 import { createEffect, ofType, Actions } from '@ngrx/effects';
 import {
   addTodo, addTodoToUi, editTodo, getTodos, markAllCompleted, removeTodo, syncTodos,
-  clearCompleted, clearCompletedUi, genericError, removeTodoUi, editTodoUi
+  clearCompleted, clearCompletedUi, genericError, removeTodoUi, editTodoUi, markAllCompletedUi
 } from './todo.actions';
 import { catchError, map, mergeMap, of, switchMap, withLatestFrom, take } from 'rxjs';
 import { Store } from '@ngrx/store';
@@ -63,8 +63,7 @@ export class TodosEffect {
     ofType(markAllCompleted),
     withLatestFrom(this.store.select(allTodos)),
     mergeMap(([, todos]) => this.todoService.markAllTodosComplete(todos)),
+    map(() => markAllCompletedUi()),
     catchError((err) => of({ type: genericError.type, err: err }))
-  ),
-    { dispatch: false }
-  );
+  ));
 };

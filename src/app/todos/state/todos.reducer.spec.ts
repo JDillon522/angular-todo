@@ -1,5 +1,5 @@
 import { todosReducer } from './todos.reducer';
-import { addTodoToUi, changeFilterMode, clearCompletedUi, editTodo, editTodoUi, genericError, markAllCompleted, openTodoEdit, removeTodo, removeTodoUi, syncTodos } from './todo.actions';
+import { addTodoToUi, changeFilterMode, clearCompletedUi, editTodo, editTodoUi, genericError, markAllCompleted, markAllCompletedUi, openTodoEdit, removeTodo, removeTodoUi, syncTodos } from './todo.actions';
 import { clone } from '@app/lib/utils';
 import { ITodo } from '../interfaces/ITodo';
 import { MOCK_INITIAL_STATE, MOCK_NEW_TODO, MOCK_TODOS, MOCK_TODOS_SORTED } from './testing/mocks';
@@ -57,7 +57,7 @@ describe('Todos Reducer', () => {
     });
 
     it('Should mark all Todos Complete', () => {
-      const action = markAllCompleted();
+      const action = markAllCompletedUi();
       const state = todosReducer(initialStateWithTodos, action);
 
       state.todos.forEach(todo => {

@@ -24,7 +24,7 @@ export function todosReducer(state: ITodosState, action: Action) {
     on(TodoActions.syncTodos, syncTodos),
     on(TodoActions.addTodoToUi, addTodoToUi),
     on(TodoActions.editTodoUi, editTodoUi),
-    on(TodoActions.markAllCompleted, markAllCompleted),
+    on(TodoActions.markAllCompletedUi, markAllCompletedUi),
     on(TodoActions.removeTodoUi, removeTodoUi),
     on(TodoActions.changeFilterMode, changeFilterMode),
     on(TodoActions.clearCompletedUi, clearCompletedUi),
@@ -71,7 +71,7 @@ const editTodoUi = (existingState: ITodosState, {todo}: ITodoActionUpdate): ITod
   };
 }
 
-const markAllCompleted = (existingState: ITodosState): ITodosState => {
+const markAllCompletedUi = (existingState: ITodosState): ITodosState => {
   const todos = clone(existingState.todos);
   todos.forEach(innerTodo => {
     innerTodo.completed = true;

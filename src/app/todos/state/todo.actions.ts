@@ -44,7 +44,11 @@ export const editTodoUi = createAction(
 );
 
 export const markAllCompleted = createAction(
-  '[Todos] Mark all Todos complete'
+  '[Todos] Mark all Todos complete in the DB'
+);
+
+export const markAllCompletedUi = createAction(
+  '[Todos] Mark all Todos complete in the UI'
 );
 
 export const changeFilterMode = createAction(

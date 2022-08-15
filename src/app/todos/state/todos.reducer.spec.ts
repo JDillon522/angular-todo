@@ -1,32 +1,14 @@
-import { ITodosState, todosReducer } from './todos.reducer';
+import { todosReducer } from './todos.reducer';
 import { addTodoToUi, changeFilterMode, clearCompletedUi, editTodo, genericError, markAllCompleted, openTodoEdit, removeTodo, syncTodos } from './todo.actions';
-import { TodosService } from '../services/todos.service';
 import { clone } from '@app/lib/utils';
 import { ITodo } from '../interfaces/ITodo';
-import { TestBed } from '@angular/core/testing';
 import { MOCK_INITIAL_STATE, MOCK_TODOS, MOCK_TODOS_SORTED } from './testing/mocks';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
 
 describe('Todos Reducer', () => {
-  let todoServiceSpy: jasmine.SpyObj<TodosService>;
-  let store: MockStore;
   const initialState = MOCK_INITIAL_STATE;
   let initialStateWithTodos = {...initialState, todos: MOCK_TODOS};
 
   beforeEach(() => {
-    const spy = jasmine.createSpyObj('TodoService', ['getTodosFromDb']);
-
-    TestBed.configureTestingModule({
-      providers: [
-        provideMockStore({
-          initialState: MOCK_INITIAL_STATE
-        }),
-        { provide: TodosService, useValue: spy}
-      ]
-    });
-
-    store = TestBed.inject(MockStore);
-    todoServiceSpy = TestBed.inject(TodosService) as jasmine.SpyObj<TodosService>;
     initialStateWithTodos = clone({...initialState, todos: MOCK_TODOS});
   });
 

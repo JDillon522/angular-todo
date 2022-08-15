@@ -9,7 +9,7 @@ import { clone, sortTodos } from '../../lib/utils';
 export interface ITodosState {
   filterMode: FILTER_MODES;
   todos: ITodo[];
-  errors: string | Error;
+  errors: string;
 }
 
 export const initialState: ITodosState = {
@@ -23,9 +23,9 @@ export function todosReducer(state: ITodosState, action: Action) {
     initialState,
     on(TodoActions.syncTodos, syncTodos),
     on(TodoActions.addTodoToUi, addTodoToUi),
-    on(TodoActions.editTodo, editTodo),
+    on(TodoActions.editTodoUi, editTodoUi),
     on(TodoActions.markAllCompleted, markAllCompleted),
-    on(TodoActions.removeTodo, removeTodo),
+    on(TodoActions.removeTodoUi, removeTodoUi),
     on(TodoActions.changeFilterMode, changeFilterMode),
     on(TodoActions.clearCompletedUi, clearCompletedUi),
     on(TodoActions.openTodoEdit, openTodoEdit),
@@ -42,7 +42,7 @@ const syncTodos = (existingState: ITodosState, { todos }: ITodoActionSync): ITod
   }
 }
 
-const addTodoToUi = (existingState: ITodosState, todo: ITodoActionUpdate): ITodosState => {
+const addTodoToUi = (existingState: ITodosState, {todo}: ITodoActionUpdate): ITodosState => {
   const todos = clone(existingState.todos);
   todos.unshift(todo);
 
@@ -52,7 +52,7 @@ const addTodoToUi = (existingState: ITodosState, todo: ITodoActionUpdate): ITodo
   };
 }
 
-const editTodo = (existingState: ITodosState, todo: ITodoActionUpdate): ITodosState => {
+const editTodoUi = (existingState: ITodosState, {todo}: ITodoActionUpdate): ITodosState => {
   const todos = clone(existingState.todos);
   const index = todos.findIndex(t => t.id === todo.id);
 
@@ -83,7 +83,7 @@ const markAllCompleted = (existingState: ITodosState): ITodosState => {
   };
 }
 
-const removeTodo = (existingState: ITodosState, { id }: ITodoActionId): ITodosState => {
+const removeTodoUi = (existingState: ITodosState, { id }: ITodoActionId): ITodosState => {
   const todos = clone(existingState.todos);
   const index = todos.findIndex(t => t.id === id);
 

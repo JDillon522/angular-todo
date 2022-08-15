@@ -1,8 +1,8 @@
 import { todosReducer } from './todos.reducer';
-import { addTodoToUi, changeFilterMode, clearCompletedUi, editTodo, genericError, markAllCompleted, openTodoEdit, removeTodo, syncTodos } from './todo.actions';
+import { addTodoToUi, changeFilterMode, clearCompletedUi, editTodo, editTodoUi, genericError, markAllCompleted, openTodoEdit, removeTodo, removeTodoUi, syncTodos } from './todo.actions';
 import { clone } from '@app/lib/utils';
 import { ITodo } from '../interfaces/ITodo';
-import { MOCK_INITIAL_STATE, MOCK_TODOS, MOCK_TODOS_SORTED } from './testing/mocks';
+import { MOCK_INITIAL_STATE, MOCK_NEW_TODO, MOCK_TODOS, MOCK_TODOS_SORTED } from './testing/mocks';
 
 describe('Todos Reducer', () => {
   const initialState = MOCK_INITIAL_STATE;
@@ -23,18 +23,14 @@ describe('Todos Reducer', () => {
 
   describe('Add Todos', () => {
     it('Should add Todo to the state', () => {
-      const newTodo: ITodo = {
-        id: 8675309,
-        text: 'Dummy',
-        completed: false,
-        editing: false
-      };
+      const newTodo: ITodo = MOCK_NEW_TODO;
+      newTodo.id = 8675309;
 
       const newState = {
         ...initialStateWithTodos,
         todos: [ newTodo, ...MOCK_TODOS]
       };
-      const action = addTodoToUi(newTodo);
+      const action = addTodoToUi({ todo: newTodo });
       const state = todosReducer(initialStateWithTodos, action);
 
       expect(state.todos.length).toEqual(newState.todos.length);
@@ -52,7 +48,7 @@ describe('Todos Reducer', () => {
       const newState = {...initialStateWithTodos};
       newState.todos[0] = updated;
 
-      const action = editTodo(updated);
+      const action = editTodoUi({ todo: updated });
       const state = todosReducer(initialStateWithTodos, action);
 
       expect(state.todos[0].completed).toEqual(newState.todos[0].completed);
@@ -90,7 +86,7 @@ describe('Todos Reducer', () => {
       const updated: ITodo = clone(MOCK_TODOS[0]);
       updated.id = 123;
 
-      const action = editTodo(updated);
+      const action = editTodoUi({ todo: updated});
       const state = todosReducer(initialStateWithTodos, action);
       expect(state.errors).toEqual('Cannot edit Todo with ID: 123.');
     });
@@ -104,7 +100,7 @@ describe('Todos Reducer', () => {
 
   describe('Remove Todos', () => {
     it('Should remove a single todo', () => {
-      const action = removeTodo({ id: 1 });
+      const action = removeTodoUi({ id: 1 });
       const state = todosReducer(initialStateWithTodos, action);
       const deletedTodo = state.todos.find(todo => todo.id === 1);
 
@@ -113,7 +109,7 @@ describe('Todos Reducer', () => {
     });
 
     it('Should set an error if the Todo doesnt exist', () => {
-      const action = removeTodo({ id: 123 });
+      const action = removeTodoUi({ id: 123 });
       const state = todosReducer(initialStateWithTodos, action);
 
       expect(state.todos.length).toBe(3);
@@ -124,13 +120,13 @@ describe('Todos Reducer', () => {
       let updated: ITodo = clone(MOCK_TODOS[0]);
       updated.completed = true;
 
-      let updateAction = editTodo(updated);
+      let updateAction = editTodoUi({ todo: updated });
       let state = todosReducer(initialStateWithTodos, updateAction);
 
       updated = clone(MOCK_TODOS[1]);
       updated.completed = true;
 
-      updateAction = editTodo(updated);
+      updateAction = editTodoUi({ todo: updated });
       state = todosReducer(state, updateAction);
 
       const clearAction = clearCompletedUi();

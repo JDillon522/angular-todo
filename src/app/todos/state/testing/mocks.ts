@@ -26,7 +26,7 @@ export const MOCK_TODOS: ITodo[] = [
     id: 3,
     editing: false
   }
-]
+];
 
 export const MOCK_TODOS_SORTED: ITodo[] = [
   {
@@ -47,4 +47,10 @@ export const MOCK_TODOS_SORTED: ITodo[] = [
     id: 1,
     editing: false
   }
-]
+];
+
+export const MOCK_NEW_TODO: ITodo = {
+  text: 'Weed the garden',
+  completed: false,
+  editing: false
+};

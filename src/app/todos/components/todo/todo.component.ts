@@ -84,6 +84,6 @@ export class TodoComponent implements OnChanges, OnDestroy, AfterViewInit, After
   }
 
   public editTodo() {
-    this.store.dispatch(editTodo(this.todoForm.value as ITodo));
+    this.store.dispatch(editTodo({ todo: this.todoForm.value as ITodo }));
   }
 }

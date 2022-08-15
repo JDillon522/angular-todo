@@ -32,7 +32,7 @@ export class TodosService {
     );
   }
 
-  public updateTodoInDb(todo: ITodo): Observable<number> {
+  public updateTodoInDb(todo: ITodo): Observable<ITodo> {
     if (!todo) {
       throw new Error('Invalid request');
     }
@@ -40,7 +40,7 @@ export class TodosService {
     delete todo.editing;
 
     return from(this.db.todos.update(todo.id, todo)).pipe(
-      map(numAffected => numAffected)
+      map(() => todo)
     );
   }
 

@@ -1,6 +1,8 @@
 import { createAction, props } from '@ngrx/store';
-import { FILTER_MODES } from '../constants/filter-modes';
-import { ITodoActionCreate, ITodoActionId, ITodoActionUpdate, ITodoActionFilter, ITodoActionSync, ITodoActionEditTodo, ITodoActionError } from '../interfaces/IActions';
+import {
+  ITodoActionCreate, ITodoActionId, ITodoActionUpdate, ITodoActionFilter,
+  ITodoActionSync, ITodoActionEditTodo, ITodoActionError
+} from '../interfaces/IActions';
 
 export const getTodos = createAction(
   '[TODO] Get Todos'
@@ -22,12 +24,22 @@ export const syncTodos = createAction(
 )
 
 export const removeTodo = createAction(
-  '[Todos] Remove Todo',
+  '[Todos] Remove Todo from the DB',
+  props<ITodoActionId>(),
+);
+
+export const removeTodoUi = createAction(
+  '[Todos] Remove Todo from the UI',
   props<ITodoActionId>(),
 );
 
 export const editTodo = createAction(
-  '[Todos] Edit Todo',
+  '[Todos] Edit Todo in the DB',
+  props<ITodoActionUpdate>(),
+);
+
+export const editTodoUi = createAction(
+  '[Todos] Edit Todo and update the UI',
   props<ITodoActionUpdate>(),
 );
 

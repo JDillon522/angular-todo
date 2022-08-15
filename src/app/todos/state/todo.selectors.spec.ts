@@ -1,7 +1,7 @@
 import { clone } from "../../lib/utils";
 import { ITodo } from "../interfaces/ITodo";
 import { MOCK_INITIAL_STATE, MOCK_TODOS } from "./testing/mocks";
-import { changeFilterMode, editTodo, markAllCompleted } from "./todo.actions";
+import { changeFilterMode, editTodoUi, markAllCompleted } from "./todo.actions";
 import { allAreCompleted, allCompletedTodos, allTodos, currentFilter, filteredTodos } from "./todo.selectors";
 import { todosReducer } from './todos.reducer';
 
@@ -23,7 +23,7 @@ describe('Selectors', () => {
     const updated: ITodo = clone(MOCK_TODOS[0]);
     updated.completed = true;
 
-    const editAction = editTodo(updated);
+    const editAction = editTodoUi({ todo: updated});
     let state = todosReducer(initialStateWithTodos, editAction);
 
     let filterAction = changeFilterMode({ mode: 'Completed' });
@@ -47,7 +47,7 @@ describe('Selectors', () => {
     const updated: ITodo = clone(MOCK_TODOS[0]);
     updated.completed = true;
 
-    const editAction = editTodo(updated);
+    const editAction = editTodoUi({ todo: updated});
     const state = todosReducer(initialStateWithTodos, editAction);
 
     const result = allCompletedTodos.projector(state);
@@ -66,7 +66,7 @@ describe('Selectors', () => {
     const updated: ITodo = clone(MOCK_TODOS[0]);
     updated.completed = true;
 
-    const editAction = editTodo(updated);
+    const editAction = editTodoUi({ todo: updated });
     const state = todosReducer(initialStateWithTodos, editAction);
 
     const result = allAreCompleted.projector(state);

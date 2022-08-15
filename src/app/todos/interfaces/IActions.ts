@@ -9,7 +9,9 @@ export interface ITodoActionCreate {
   text: string;
 }
 
-export interface ITodoActionUpdate extends ITodo {}
+export interface ITodoActionUpdate {
+  todo: ITodo;
+}
 
 export interface ITodoActionFilter {
   mode: FILTER_MODES;

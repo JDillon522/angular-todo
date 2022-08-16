@@ -6,7 +6,7 @@ import { Observable, map, Subject, withLatestFrom, mergeMap, takeUntil } from 'r
 import { FILTER_MODES } from '../../constants/filter-modes';
 import { getTodos, addTodo, changeFilterMode, clearCompleted } from '../../state/todo.actions';
 import { currentFilter, errors, allTodos, filteredTodos, noResultsMessage, loading } from '../../state/todo.selectors';
-import { startCase } from 'lodash';
+import { startCase } from 'lodash-es';
 import { ITodo } from '../../interfaces/ITodo';
 
 @Component({

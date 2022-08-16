@@ -4,7 +4,8 @@ import { ITodosState } from "../todos.reducer";
 export const MOCK_INITIAL_STATE: ITodosState = {
   todos: [],
   filterMode: 'All',
-  errors: null
+  errors: null,
+  loading: false
 };
 
 export const MOCK_TODOS: ITodo[] = [

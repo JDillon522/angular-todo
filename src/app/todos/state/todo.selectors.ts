@@ -3,6 +3,11 @@ import { ITodosState } from './todos.reducer';
 
 export const todosSelector = createFeatureSelector<ITodosState>('todos');
 
+export const loading = createSelector(
+  todosSelector,
+  (state: ITodosState) => state.loading
+);
+
 export const allTodos = createSelector(
   todosSelector,
   (state: ITodosState) => state.todos

@@ -3,7 +3,6 @@ import { from, map, Observable } from 'rxjs';
 import { TodoDb } from './db';
 import { ITodo } from '../interfaces/ITodo';
 
-
 @Injectable()
 export class TodosService {
 

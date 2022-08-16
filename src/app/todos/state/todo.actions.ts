@@ -1,8 +1,13 @@
 import { createAction, props } from '@ngrx/store';
 import {
   ITodoActionCreate, ITodoActionId, ITodoActionUpdate, ITodoActionFilter,
-  ITodoActionSync, ITodoActionEditTodo, ITodoActionError
+  ITodoActionSync, ITodoActionEditTodo, ITodoActionError, ITodoActionToggleLoading
 } from '../interfaces/IActions';
+
+export const setLoading = createAction(
+  '[TODO] Set loading status',
+  props<ITodoActionToggleLoading>()
+);
 
 export const getTodos = createAction(
   '[TODO] Get Todos'

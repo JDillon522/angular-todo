@@ -5,8 +5,9 @@ import { Store } from '@ngrx/store';
 import { Observable, map, Subject, withLatestFrom, mergeMap, takeUntil } from 'rxjs';
 import { FILTER_MODES } from '../../constants/filter-modes';
 import { getTodos, addTodo, changeFilterMode, clearCompleted } from '../../state/todo.actions';
-import { currentFilter, errors, allTodos } from '../../state/todo.selectors';
+import { currentFilter, errors, allTodos, filteredTodos, noResultsMessage, loading } from '../../state/todo.selectors';
 import { startCase } from 'lodash';
+import { ITodo } from '../../interfaces/ITodo';
 
 @Component({
   selector: 'app-todos',
@@ -14,17 +15,23 @@ import { startCase } from 'lodash';
   styleUrls: ['./todos.component.scss']
 })
 export class TodosComponent implements OnInit, OnDestroy {
+  // Public Streams
   public errors$: Observable<string> = this.store.select(errors);
   public hasCompletedTodos$: Observable<boolean> = this.store.select(allTodos).pipe(
     map((todos) => todos.filter(todo => todo.completed).length > 0)
   );
+  public todos$: Observable<ITodo[]> = this.store.select(filteredTodos);
+  public noResultsMessage$: Observable<string> = this.store.select(noResultsMessage);
+  public loading$: Observable<boolean> = this.store.select(loading);
 
+  // Private Streams
+  private currentFilter$: Observable<FILTER_MODES> = this.store.select(currentFilter);
+  private destroyed$ = new Subject();
+
+  // Public objects
   public newTodoForm = new FormGroup({
     todo: new FormControl(null, [Validators.minLength(1), Validators.required])
   });
-
-  private currentFilter$: Observable<FILTER_MODES> = this.store.select(currentFilter);
-  private destroyed$ = new Subject();
 
   constructor(
     private store: Store,

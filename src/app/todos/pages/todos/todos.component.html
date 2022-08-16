@@ -1,16 +1,24 @@
 <h1>todos</h1>
 <main class="todoapp">
+
   <header class="header">
     <form [formGroup]="newTodoForm" (ngSubmit)="addTodo()" enctype="application/x-www-form-urlencoded" role="form" >
       <input formControlName="todo" class="new-todo" placeholder="What needs to be done" autofocus >
     </form>
   </header>
+
   <section class="main">
     <app-complete-all></app-complete-all>
-    <app-todos-list></app-todos-list>
+    <app-todos-list
+      *ngIf="{ todos: todos$ | async } as vm"
+      [todos]="vm.todos"
+      [message]="noResultsMessage$ | async"
+      [loading]="loading$ | async"
+    ></app-todos-list>
   </section>
+
   <footer class="footer">
-    <span class="todo-count"></span>
+    <span class="todo-count">( {{(todos$ | async)?.length || 0}} )</span>
     <ul class="filters">
       <li>
         <a routerLink="/all" routerLinkActive="selected">All</a>
@@ -24,10 +32,13 @@
     </ul>
     <button class="clear-completed" (click)="clearCompleted()" [disabled]="!(hasCompletedTodos$ | async)">Clear Completed</button>
   </footer>
+
 </main>
-<footer class="info">
+
+<div class="info">
   <p>Double-click to edit a todo</p>
-</footer>
+</div>
+
 <div class="error" *ngIf="(errors$ | async) as errors">
   <h3>{{errors}}</h3>
 </div>

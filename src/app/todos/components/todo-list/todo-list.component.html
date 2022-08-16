@@ -1,8 +1,11 @@
 <ul class="todo-list">
-  <li *ngFor="let todo of todos$ | async" [ngClass]="{'editing': todo.editing}">
+  <li class="skeleton-li" *ngIf="loading">
+    <div class="skeleton"></div>
+  </li>
+  <li *ngFor="let todo of todos" [ngClass]="{'editing': todo.editing}">
     <app-todo [todo]="todo" ></app-todo>
   </li>
-  <li class="no-matches" *ngIf="!(todos$ | async).length">
-    {{noResultsMessage$ | async}}
+  <li class="no-matches" *ngIf="!todos?.length && !loading">
+    {{message}}
   </li>
 </ul>

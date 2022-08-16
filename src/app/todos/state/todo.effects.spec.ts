@@ -6,7 +6,6 @@ import { firstValueFrom, Observable, of } from "rxjs";
 import { TodosService } from "../services/todos.service";
 import { MOCK_INITIAL_STATE, MOCK_NEW_TODO, MOCK_TODOS } from "./testing/mocks";
 import { TodosEffect } from "./todo.effects";
-import { initialState } from "./todos.reducer";
 import { addTodo, addTodoToUi, editTodo, editTodoUi, genericError, getTodos, markAllCompleted, markAllCompletedUi, removeTodo, removeTodoUi, syncTodos } from "./todo.actions";
 
 

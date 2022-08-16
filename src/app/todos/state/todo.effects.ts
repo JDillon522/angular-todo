@@ -3,9 +3,9 @@ import { TodosService } from '../services/todos.service';
 import { createEffect, ofType, Actions } from '@ngrx/effects';
 import {
   addTodo, addTodoToUi, editTodo, getTodos, markAllCompleted, removeTodo, syncTodos,
-  clearCompleted, clearCompletedUi, genericError, removeTodoUi, editTodoUi, markAllCompletedUi
+  clearCompleted, clearCompletedUi, genericError, removeTodoUi, editTodoUi, markAllCompletedUi, setLoading
 } from './todo.actions';
-import { catchError, map, mergeMap, of, switchMap, withLatestFrom, take } from 'rxjs';
+import { catchError, map, mergeMap, of, switchMap, withLatestFrom, delay, tap } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { allCompletedTodos, allTodos } from './todo.selectors';
 
@@ -19,8 +19,9 @@ export class TodosEffect {
 
   public getTodos$ = createEffect(() => this.actions$.pipe(
     ofType(getTodos),
-    take(1),
     switchMap(() => this.todoService.getTodosFromDb()),
+    delay(800),
+    tap(() => this.store.dispatch(setLoading({ loading: false }))),
     map(todos => syncTodos({ todos })),
     catchError((err) => of({ type: genericError.type, err: err }))
   ));
@@ -28,6 +29,9 @@ export class TodosEffect {
   public addTodo$ = createEffect(() => this.actions$.pipe(
     ofType(addTodo),
     mergeMap((payload) => this.todoService.addTodoToDb(payload.text)),
+    tap(() => this.store.dispatch(setLoading({ loading: true }))),
+    delay(800),
+    tap(() => this.store.dispatch(setLoading({ loading: false }))),
     map((todo) => addTodoToUi({ todo })),
     catchError((err) => of({ type: genericError.type, err: err }))
   ));

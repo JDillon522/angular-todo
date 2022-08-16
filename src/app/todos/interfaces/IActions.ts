@@ -1,6 +1,10 @@
 import { FILTER_MODES } from '../constants/filter-modes';
 import { ITodo } from './ITodo';
 
+export interface ITodoActionToggleLoading {
+  loading: boolean;
+}
+
 export interface ITodoActionId {
   id: number;
 }

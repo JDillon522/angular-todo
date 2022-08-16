@@ -1,7 +1,7 @@
 import { clone } from "../../lib/utils";
 import { ITodo } from "../interfaces/ITodo";
 import { MOCK_INITIAL_STATE, MOCK_TODOS } from "./testing/mocks";
-import { changeFilterMode, editTodoUi, markAllCompleted, markAllCompletedUi } from "./todo.actions";
+import { changeFilterMode, editTodoUi, markAllCompletedUi } from "./todo.actions";
 import { allAreCompleted, allCompletedTodos, allTodos, currentFilter, filteredTodos } from "./todo.selectors";
 import { todosReducer } from './todos.reducer';
 

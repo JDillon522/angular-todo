@@ -23,7 +23,7 @@ export class CompleteAllComponent {
     private store: Store
   ) {}
 
-  toggleCompleteAll(): void {
+  public toggleCompleteAll(): void {
     this.store.dispatch(markAllCompleted());
   }
 

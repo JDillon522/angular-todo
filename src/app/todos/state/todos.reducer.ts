@@ -1,26 +1,31 @@
-import { Action, createReducer, on, ActionCreator } from '@ngrx/store';
+import { Action, createReducer, on } from '@ngrx/store';
 import * as TodoActions from './todo.actions';
-
 import { FILTER_MODES } from './../constants/filter-modes';
 import { ITodo } from '../interfaces/ITodo';
-import { ITodoActionCreate, ITodoActionId, ITodoActionFilter, ITodoActionSync, ITodoActionUpdate, ITodoActionEditTodo, ITodoActionError } from '../interfaces/IActions';
+import {
+  ITodoActionId, ITodoActionFilter, ITodoActionSync, ITodoActionUpdate, ITodoActionEditTodo,
+  ITodoActionError, ITodoActionToggleLoading
+} from '../interfaces/IActions';
 import { clone, sortTodos } from '../../lib/utils';
 
 export interface ITodosState {
   filterMode: FILTER_MODES;
   todos: ITodo[];
   errors: string;
+  loading: boolean;
 }
 
 export const initialState: ITodosState = {
   filterMode: 'All',
   todos: [],
-  errors: null
+  errors: null,
+  loading: true
 };
 
 export function todosReducer(state: ITodosState, action: Action) {
   return createReducer(
     initialState,
+    on(TodoActions.setLoading, setLoading),
     on(TodoActions.syncTodos, syncTodos),
     on(TodoActions.addTodoToUi, addTodoToUi),
     on(TodoActions.editTodoUi, editTodoUi),
@@ -31,6 +36,13 @@ export function todosReducer(state: ITodosState, action: Action) {
     on(TodoActions.openTodoEdit, openTodoEdit),
     on(TodoActions.genericError, genericError)
   )(state, action);
+}
+
+const setLoading = (existingState: ITodosState, { loading }: ITodoActionToggleLoading): ITodosState => {
+  return {
+    ...existingState,
+    loading
+  }
 }
 
 const syncTodos = (existingState: ITodosState, { todos }: ITodoActionSync): ITodosState => {

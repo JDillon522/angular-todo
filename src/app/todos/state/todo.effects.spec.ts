@@ -47,7 +47,7 @@ describe('Effects', () => {
   })
 
 
-  it('Should return all todos from "getTodos"', async (done) => {
+  it('Should return all todos from "getTodos"', async () => {
     actions$ = of(getTodos());
 
     const result = await firstValueFrom(effect.getTodos$)
@@ -56,11 +56,9 @@ describe('Effects', () => {
       type: syncTodos.type,
       todos: MOCK_TODOS
     });
-
-    done();
   });
 
-  it('Should properly handle adding a todo', async (done) => {
+  it('Should properly handle adding a todo', async () => {
     actions$ = of(addTodo({ text: MOCK_NEW_TODO.text }));
 
     const result = await firstValueFrom(effect.addTodo$);
@@ -68,11 +66,9 @@ describe('Effects', () => {
       type: addTodoToUi.type,
       todo: newTodoWithId
     });
-
-    done();
   });
 
-  it('Should properly remove a Todo', async (done) => {
+  it('Should properly remove a Todo', async () => {
     actions$ = of(removeTodo({ id: removeTodoIndex }));
 
     const result = await firstValueFrom(effect.removeTodo$);
@@ -80,11 +76,9 @@ describe('Effects', () => {
       type: removeTodoUi.type,
       id: removeTodoIndex
     });
-
-    done();
   });
 
-  it('Should properly edit a Todo', async (done) => {
+  it('Should properly edit a Todo', async () => {
     actions$ = of(editTodo({ todo: afterEditTodo }));
 
     const result = await firstValueFrom(effect.editTodo$);
@@ -92,18 +86,14 @@ describe('Effects', () => {
       type: editTodoUi.type,
       todo: afterEditTodo
     });
-
-    done();
   });
 
-  it('Should mark all completed', async (done) => {
+  it('Should mark all completed', async () => {
     actions$ = of(markAllCompleted());
 
     const result = await firstValueFrom(effect.markAllTodosComplete$);
     expect(result).toEqual({
       type: markAllCompletedUi.type
     });
-
-    done();
   });
 });

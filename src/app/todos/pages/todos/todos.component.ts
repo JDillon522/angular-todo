@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { Observable, map, Subject, withLatestFrom, mergeMap, takeUntil } from 'rxjs';
 import { FILTER_MODES } from '../../constants/filter-modes';
 import { getTodos, addTodo, changeFilterMode, clearCompleted } from '../../state/todo.actions';
-import { currentFilter, errors, allTodos, filteredTodos, noResultsMessage, loading } from '../../state/todo.selectors';
+import { currentFilter, errors, allTodos, filteredTodos, noResultsMessage, loading, allAreCompleted } from '../../state/todo.selectors';
 import { startCase } from 'lodash-es';
 import { ITodo } from '../../interfaces/ITodo';
 
@@ -23,6 +23,10 @@ export class TodosComponent implements OnInit, OnDestroy {
   public todos$: Observable<ITodo[]> = this.store.select(filteredTodos);
   public noResultsMessage$: Observable<string> = this.store.select(noResultsMessage);
   public loading$: Observable<boolean> = this.store.select(loading);
+  public multipleTodosExist$: Observable<boolean> = this.store.select(allTodos).pipe(
+    map(todos => todos.length > 1)
+  );
+  public allTodosAreSelected$: Observable<boolean> = this.store.select(allAreCompleted);
 
   // Private Streams
   private currentFilter$: Observable<FILTER_MODES> = this.store.select(currentFilter);

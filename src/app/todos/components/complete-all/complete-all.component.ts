@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, ChangeDetectionStrategy, Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 
 import { TodosService } from '@app/todos/services/todos.service';
@@ -16,8 +16,11 @@ import { ITodo } from '../../interfaces/ITodo';
   templateUrl: './complete-all.component.html',
 })
 export class CompleteAllComponent {
-  public multipleTodosExist$: Observable<ITodo[]> = this.store.select(allTodos);
-  public allTodosAreSelected$: Observable<boolean> = this.store.select(allAreCompleted);
+  @Input()
+  public allSelected: boolean;
+
+  @Input()
+  public multipleTodosExist: boolean;
 
   constructor (
     private store: Store

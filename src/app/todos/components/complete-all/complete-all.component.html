@@ -1,4 +1,4 @@
-<ng-container *ngIf="(multipleTodosExist$ | async).length > 1">
-  <input id="toggle-all" class="toggle-all" type="checkbox" (click)="toggleCompleteAll()" [ngModel]="allTodosAreSelected$ | async">
+<ng-container *ngIf="multipleTodosExist">
+  <input id="toggle-all" class="toggle-all" type="checkbox" (click)="toggleCompleteAll()" [ngModel]="allSelected">
   <label for="toggle-all" class="toggle-all-label" title="Mark all as complete">Mark all as complete</label>
 </ng-container>

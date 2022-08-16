@@ -39,7 +39,8 @@ export class TodoComponent implements OnChanges, OnDestroy, AfterViewInit, After
       id: this.todo.id,
       completed: this.todo?.completed || null,
       text: this.todo.text
-    });  }
+    });
+  }
 
   ngOnDestroy(): void {
     this.destroyed$.complete();
@@ -47,7 +48,7 @@ export class TodoComponent implements OnChanges, OnDestroy, AfterViewInit, After
 
   ngAfterViewInit(): void {
     /**
-     * I fought like hell to get this to be purely reactive and to avoid any
+     * I fought like hell to make this purely reactive and to avoid any
      * manual subscriptions. I ran into some weird bugs. I'll revisit at a later date
      * with fresh eyes.
      */

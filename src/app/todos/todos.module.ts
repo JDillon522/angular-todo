@@ -11,12 +11,35 @@ import { EffectsModule } from '@ngrx/effects';
 import { TodosEffect } from './state/todo.effects';
 import { TodoDb } from './services/db';
 import { TodoComponent } from './components/todo/todo.component';
+import { TodosComponent } from './pages/todos/todos.component';
+import { Route, RouterModule } from '@angular/router';
 
 const DECLARATIONS = [
   CompleteAllComponent,
   TodosListComponent,
-  TodoComponent
+  TodoComponent,
+  TodosComponent
 ];
+
+const TODO_ROUTES: Route[] = [
+  {
+    path: 'all',
+    component: TodosComponent
+  },
+  {
+    path: 'completed',
+    component: TodosComponent
+  },
+  {
+    path: 'active',
+    component: TodosComponent
+  },
+  {
+    path: '**',
+    pathMatch: 'full',
+    redirectTo: 'all'
+  }
+]
 
 @NgModule({
   declarations: [
@@ -31,6 +54,7 @@ const DECLARATIONS = [
     ReactiveFormsModule,
     StoreModule.forFeature('todos', todosReducer),
     EffectsModule.forFeature([TodosEffect]),
+    RouterModule.forChild(TODO_ROUTES)
   ],
   providers: [
     TodosService,

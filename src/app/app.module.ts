@@ -9,6 +9,7 @@ import { TodosModule } from './todos/todos.module';
 import { EffectsModule } from '@ngrx/effects';
 import { TodosEffect } from './todos/state/todo.effects';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     }) : [],
     TodosModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterModule.forRoot([])
   ],
   providers: [],
   bootstrap: [AppComponent]

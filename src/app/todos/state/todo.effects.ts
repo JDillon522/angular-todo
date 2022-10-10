@@ -3,11 +3,13 @@ import { TodosService } from '../services/todos.service';
 import { createEffect, ofType, Actions } from '@ngrx/effects';
 import {
   addTodo, addTodoToUi, editTodo, getTodos, markAllCompleted, removeTodo, syncTodos,
-  clearCompleted, clearCompletedUi, genericError, removeTodoUi, editTodoUi, markAllCompletedUi, setLoading
+  clearCompleted, clearCompletedUi, genericError, removeTodoUi, editTodoUi, markAllCompletedUi, setLoading, startSimulatedWebsocketConnection, noOp
 } from './todo.actions';
-import { catchError, map, mergeMap, of, switchMap, withLatestFrom, delay, tap } from 'rxjs';
+import { catchError, map, mergeMap, of, switchMap, withLatestFrom, delay, tap, interval, timeInterval, combineLatest, concatMap } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { allCompletedTodos, allTodos } from './todo.selectors';
+import { sample } from 'lodash-es';
+import { dummyTasks, dummyUsers } from './dummyTasks';
 
 @Injectable()
 export class TodosEffect {
@@ -30,7 +32,7 @@ export class TodosEffect {
     ofType(addTodo),
     mergeMap((payload) => this.todoService.addTodoToDb(payload.text)),
     tap(() => this.store.dispatch(setLoading({ loading: true }))),
-    delay(800),
+    delay(Math.random() * 2500),
     tap(() => this.store.dispatch(setLoading({ loading: false }))),
     map((todo) => addTodoToUi({ todo })),
     catchError((err) => of({ type: genericError.type, err: err }))
@@ -70,4 +72,27 @@ export class TodosEffect {
     map(() => markAllCompletedUi()),
     catchError((err) => of({ type: genericError.type, err: err }))
   ));
+
+  public initStreamMock$ = createEffect(() => {
+    return combineLatest([
+      this.actions$.pipe(
+        ofType(startSimulatedWebsocketConnection)
+      ),
+      interval(15000)
+    ]).pipe(
+      timeInterval(),
+      map((val) => {
+        const random = Math.random() * 10;
+
+        if (random > 5) {
+          const task = sample(dummyTasks);
+          const user = sample(dummyUsers);
+
+          return addTodo({ text: `From ${user}:  ${task}`})
+        }
+
+        return noOp();
+      })
+    )
+  });
 };

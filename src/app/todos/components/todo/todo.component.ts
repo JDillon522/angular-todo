@@ -1,7 +1,7 @@
 import { AfterViewChecked, AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { buffer, debounceTime, fromEvent, map, Observable, Subject, takeUntil } from 'rxjs';
+import { buffer, debounceTime, fromEvent, map, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { ITodo, ITodoForm } from '../../interfaces/ITodo';
 import { editTodo, openTodoEdit, removeTodo } from '../../state/todo.actions';
 

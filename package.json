@@ -8,7 +8,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "postinstall": "ngcc"
+    "postinstall": "ngcc",
+    "deploy": "ng deploy --base-href=/angular-todo/ --no-silent"
   },
   "private": true,
   "dependencies": {
@@ -37,6 +38,7 @@
     "@types/jasmine": "3.8.2",
     "@types/jasminewd2": "2.0.10",
     "@types/node": "16.6.2",
+    "angular-cli-ghpages": "^1.0.3",
     "codelyzer": "6.0.2",
     "jasmine-core": "3.8.0",
     "jasmine-spec-reporter": "7.0.0",

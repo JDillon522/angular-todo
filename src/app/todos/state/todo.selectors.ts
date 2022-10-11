@@ -8,6 +8,11 @@ export const loading = createSelector(
   (state: ITodosState) => state.loading
 );
 
+export const streamStatus = createSelector(
+  todosSelector,
+  (state: ITodosState) => state.streamCanceled
+);
+
 export const allTodos = createSelector(
   todosSelector,
   (state: ITodosState) => state.todos

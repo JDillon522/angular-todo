@@ -8,6 +8,14 @@ export const startSimulatedWebsocketConnection = createAction(
   '[TODO] start the interval that mocks a websocket connection'
 );
 
+export const connectToTodoStream = createAction(
+  '[TODO] connect to the dummy stream on heroku'
+);
+
+export const toggleStream = createAction(
+  '[TODO] toggle websocket stream'
+);
+
 export const setLoading = createAction(
   '[TODO] Set loading status',
   props<ITodoActionToggleLoading>()

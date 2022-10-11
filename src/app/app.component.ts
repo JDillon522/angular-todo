@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { startSimulatedWebsocketConnection } from './todos/state/todo.actions';
+import { TodosService } from './todos/services/todos.service';
+import { connectToTodoStream, startSimulatedWebsocketConnection } from './todos/state/todo.actions';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -11,10 +12,12 @@ import { startSimulatedWebsocketConnection } from './todos/state/todo.actions';
 export class AppComponent implements OnInit {
 
   constructor(
-    private store: Store
+    private store: Store,
+    private service: TodosService
   ) { }
 
   ngOnInit(): void {
-    this.store.dispatch(startSimulatedWebsocketConnection());
+    // this.store.dispatch(startSimulatedWebsocketConnection());
+    this.store.dispatch(connectToTodoStream());
   }
 }

@@ -13,19 +13,22 @@ export interface ITodosState {
   todos: ITodo[];
   errors: string;
   loading: boolean;
+  streamCanceled: boolean;
 }
 
 export const initialState: ITodosState = {
   filterMode: 'All',
   todos: [],
   errors: null,
-  loading: true
+  loading: true,
+  streamCanceled: false
 };
 
 export function todosReducer(state: ITodosState, action: Action) {
   return createReducer(
     initialState,
     on(TodoActions.setLoading, setLoading),
+    on(TodoActions.toggleStream, toggleStream),
     on(TodoActions.syncTodos, syncTodos),
     on(TodoActions.addTodoToUi, addTodoToUi),
     on(TodoActions.editTodoUi, editTodoUi),
@@ -42,6 +45,13 @@ const setLoading = (existingState: ITodosState, { loading }: ITodoActionToggleLo
   return {
     ...existingState,
     loading
+  }
+}
+
+const toggleStream = (existingState: ITodosState): ITodosState => {
+  return {
+    ...existingState,
+    streamCanceled: !existingState.streamCanceled
   }
 }
 

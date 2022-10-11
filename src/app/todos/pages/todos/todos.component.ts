@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, map, Subject, withLatestFrom, mergeMap, takeUntil } from 'rxjs';
 import { FILTER_MODES } from '../../constants/filter-modes';
-import { getTodos, addTodo, changeFilterMode, clearCompleted } from '../../state/todo.actions';
+import { getTodos, addTodo, changeFilterMode, clearCompleted, toggleStream } from '../../state/todo.actions';
 import { currentFilter, errors, allTodos, filteredTodos, noResultsMessage, loading, allAreCompleted } from '../../state/todo.selectors';
 import { startCase } from 'lodash-es';
 import { ITodo } from '../../interfaces/ITodo';
@@ -72,5 +72,9 @@ export class TodosComponent implements OnInit, OnDestroy {
 
   public clearCompleted(): void {
     this.store.dispatch(clearCompleted());
+  }
+
+  public toggleStream(): void {
+    this.store.dispatch(toggleStream());
   }
 }

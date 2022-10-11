@@ -3,11 +3,11 @@ import { TodosService } from '../services/todos.service';
 import { createEffect, ofType, Actions } from '@ngrx/effects';
 import {
   addTodo, addTodoToUi, editTodo, getTodos, markAllCompleted, removeTodo, syncTodos,
-  clearCompleted, clearCompletedUi, genericError, removeTodoUi, editTodoUi, markAllCompletedUi, setLoading, startSimulatedWebsocketConnection, noOp
+  clearCompleted, clearCompletedUi, genericError, removeTodoUi, editTodoUi, markAllCompletedUi, setLoading, startSimulatedWebsocketConnection, noOp, connectToTodoStream, toggleStream
 } from './todo.actions';
-import { catchError, map, mergeMap, of, switchMap, withLatestFrom, delay, tap, interval, timeInterval, combineLatest, concatMap } from 'rxjs';
+import { catchError, map, mergeMap, of, switchMap, withLatestFrom, delay, tap, interval, timeInterval, combineLatest } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { allCompletedTodos, allTodos } from './todo.selectors';
+import { allCompletedTodos, allTodos, streamStatus } from './todo.selectors';
 import { sample } from 'lodash-es';
 import { dummyTasks, dummyUsers } from './dummyTasks';
 
@@ -95,4 +95,31 @@ export class TodosEffect {
       })
     )
   });
+
+  public initHerokuStream$ = createEffect(() => this.actions$.pipe(
+    ofType(connectToTodoStream),
+    mergeMap(() => this.todoService.getTodosFromStream()),
+    withLatestFrom(this.store.select(allTodos)),
+    mergeMap(([todo, todos]) => this.todoService.checkForDuplicateTodos(todo, todos)),
+    map(([existingTodo, todo]) => {
+      if (existingTodo) {
+        return editTodo({ todo: {...existingTodo, completed: true }});
+      }
+
+      return addTodo({ text: todo });
+    })
+  ));
+
+  public toggleStream$ = createEffect(() => this.actions$.pipe(
+    ofType(toggleStream),
+    withLatestFrom(this.store.select(streamStatus)),
+    mergeMap(([, stream]) => this.todoService.toggleStream(stream)),
+    map((cancelStream) => {
+      if (!cancelStream) {
+        return connectToTodoStream();
+      }
+
+      return noOp();
+    })
+  ))
 };

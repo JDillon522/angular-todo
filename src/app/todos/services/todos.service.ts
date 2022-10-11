@@ -1,10 +1,15 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, from, map, Observable, of } from 'rxjs';
+import { BehaviorSubject, delayWhen, from, map, Observable, of, retry, retryWhen, Subject, take, takeUntil, timer } from 'rxjs';
+import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { TodoDb } from './db';
 import { ITodo } from '../interfaces/ITodo';
+import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class TodosService {
+  private streamUrl = environment.production ? 'wss://dummy-todo-ws.herokuapp.com/' : 'ws://localhost:3000';
+  public websocketStream: WebSocketSubject<any> = webSocket<{ text: string }>(this.streamUrl);
+  private cancelStream$$ = new Subject();
 
   constructor(
     private db: TodoDb
@@ -71,5 +76,28 @@ export class TodosService {
     return from(this.db.todos.bulkDelete(ids)).pipe(
       map(() => 5)
     );
+  }
+
+  public toggleStream(cancelStream: boolean): Observable<boolean> {
+    if (cancelStream) {
+      this.cancelStream$$.next({});
+      this.cancelStream$$.complete();
+    } else {
+      this.cancelStream$$ = new BehaviorSubject(false);
+    }
+
+    return of(cancelStream);
+  }
+
+  public getTodosFromStream(): Observable<string> {
+    this.websocketStream.next({ event: 'events', data: {} })
+    return this.websocketStream.pipe(
+      map(res => res.data?.text),
+      takeUntil(this.cancelStream$$)
+    );
+  }
+
+  public checkForDuplicateTodos(todo: string, todos: ITodo[]): Observable<[ITodo | null, string]> {
+    return of([todos.find(t => t.text === todo), todo]);
   }
 }

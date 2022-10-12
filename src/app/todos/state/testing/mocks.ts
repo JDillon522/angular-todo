@@ -5,7 +5,8 @@ export const MOCK_INITIAL_STATE: ITodosState = {
   todos: [],
   filterMode: 'All',
   errors: null,
-  loading: false
+  loading: false,
+  streamCanceled: false
 };
 
 export const MOCK_TODOS: ITodo[] = [

@@ -7,7 +7,7 @@ export class TodoDb extends Dexie {
   public todos!: Table<ITodo, number>;
 
   constructor() {
-    super('labCorpTodos');
+    super('angular_todos');
     this.version(3).stores({
       todos: '++id'
     });

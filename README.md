@@ -2,12 +2,12 @@
 This repo was originally cloned as part of a coding exercise. Its just a fork of [Todo MVC](http://todomvc.com/), terrible styling and all. My original task was to come in and fix it. I went above and beyond (see below).
 
 ## Original Scenario
-- All of the styling for the app is complete and almost all of the HTML markup you'll need is present in the `app.component.html` file.
-- In order to complete this project, you're going to have to have knowledge of [Angular](https://angular.io), [Ngrx](https://ngrx.io/), [Rxjs](https://rxjs-dev.firebaseapp.com/), inter-component communication and how to make components re-usable.
-- You may **not** use Ngrx/Data or Ngrx/Entities to complete this project.
-- It isn't necessary to write end-to-end tests for your work, but if you choose to write unit tests for your reducer or components, it would be a big plus.
-- Your code *must* pass AOT compilation when running: `ng build`
-- Neatness and organization count - **a lot**.
+> - All of the styling for the app is complete and almost all of the HTML markup you'll need is present in the `app.component.html` file.
+> - In order to complete this project, you're going to have to have knowledge of [Angular](https://angular.io), [Ngrx](https://ngrx.io/), [Rxjs](https://rxjs-dev.firebaseapp.com/), inter-component communication and how to make components re-usable.
+> - You may **not** use Ngrx/Data or Ngrx/Entities to complete this project.
+> - It isn't necessary to write end-to-end tests for your work, but if you choose to write unit tests for your reducer or components, it would be a big plus.
+> - Your code *must* pass AOT compilation when running: `ng build`
+> - Neatness and organization count - **a lot**.
 
 ## Notes:
 - Original Tasks
@@ -26,4 +26,4 @@ This repo was originally cloned as part of a coding exercise. Its just a fork of
   - I like to organize all my streams in routable components and then pass those streams into "dumb" child components. Thats why all my state streams are in `todos/pages/todos.component`.
 
 ## Final Notes
-I added a connection to a dummy WebSocket stream that spits back "assigned" todos (Repo: [Dummy Todo Stream](https://github.com/JDillon522/dummy-todo-stream)). It mocks a similar behavior to being assigned a task by another person. It nicely demonstrates how Ngrx can be used to handle interaction from other users or 3rd party data streams.
+I added a connection to a dummy WebSocket stream that spits back "assigned" todos (Repo: [Dummy Todo Stream](https://github.com/JDillon522/dummy-todo-stream)). It mocks a similar behavior to another person assigning you a task. It nicely demonstrates how Ngrx can be used to handle interaction from other users or 3rd party data streams.
